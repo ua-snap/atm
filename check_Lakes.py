@@ -7,8 +7,8 @@ def check_Lakes(self, element, time):
     
     if self.ATTM_Lakes[element] > 0.0:
         
-        # Determine the new pond depth
-        depth_change = np.sqrt(time)/100.
+        # Determine the new lake depth
+        depth_change = np.sqrt(time)/self.LakePond['lake_depth_control'] 
         self.Lake_Depth[element] = self.Lake_Depth[element] + depth_change
 
         # Determine the fractional change from Lakes -> Ponds

@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def read_drainage_efficiency(self, PLOT, FIGURE, DISTRIBUTION):
+def read_drainage_efficiency(self):#, PLOT, FIGURE, DISTRIBUTION):
     """
     The purpose of this module is to read (input) the drainage efficiency
     of each predisposed element.
@@ -24,18 +24,18 @@ def read_drainage_efficiency(self, PLOT, FIGURE, DISTRIBUTION):
 
     for i in range(0, self.ATTM_nrows * self.ATTM_ncols):
         if self.ATTM_Total_Fractional_Area[i] > 0.0 :
-            if DISTRIBUTION == 'RANDOM':
+            if self.Terrestrial['Drainage_Efficiency_Distribution'].lower() == 'random':
                 chance = random.random()
-                if chance > 0.85:
+                if chance > self.Terrestrial['Drainage_Efficiency_Random_Value']:
                     self.drainage_efficiency[i] = 'above'
                     drainage[i] = 1.
                 else:
                     self.drainage_efficiency[i] = 'below'
                     drainage[i] = 2.          # redundant, but explicit
-            elif DISTRIBUTION == 'ABOVE':
+            elif self.Terrestrial['Drainage_Efficiency_Distribution'].lower() == 'above':
                 self.drainage_efficiency[i] = 'above'
                 drainage[i] = 1.
-            else: # DISTRIBUTION == 'BELOW':
+            elif self.Terrestrial['Drainage_Efficiency_Distribution'].lower() == 'below':
                 self.drainage_efficiency[i] = 'below'
                 drainage[i] = 2.
         else: 
@@ -48,7 +48,7 @@ def read_drainage_efficiency(self, PLOT, FIGURE, DISTRIBUTION):
     # ==================================================
     # Create desired output files, figures, and plots
     # ==================================================
-    if PLOT == 'TRUE' or FIGURE == 'TRUE':
+    if self.Terrestrial['Drainage_Efficiency_Figure'].lower() == 'yes':
         # -------------------------
         # Move to output directory
         # -------------------------
@@ -63,11 +63,8 @@ def read_drainage_efficiency(self, PLOT, FIGURE, DISTRIBUTION):
         pl.imshow(drainage, interpolation='nearest', cmap='bone')
         pl.colorbar( extend = 'max', shrink = 0.92)
         pl.title('Drainage efficiency')
-        if FIGURE == "TRUE":
-            pl.savefig('./Initialization/Drainage_efficiency.png', format = 'png')
-            drainage.tofile('./Initialization/Drainage_efficiency.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+        pl.savefig('./Initialization/Drainage_efficiency.png', format = 'png')
+        drainage.tofile('./Initialization/Drainage_efficiency.bin')
         pl.close()
 
         os.chdir(self.control['Run_dir'])

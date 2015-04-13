@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def initial_cohort_age(self, PLOT, FIGURE):
+def initial_cohort_age(self):
     """
     The purpose of this module is to initialize the ages of
     each cohort present in the model domain. If the cohort is
@@ -52,9 +52,9 @@ def initial_cohort_age(self, PLOT, FIGURE):
         if self.ATTM_Shr_HCP[i] > 0.0 : self.Shr_HCP_age[i,0] = 1.
         if self.ATTM_Lakes[i]   > 0.0 : self.Lakes_age[i,0]   = 1.
         if self.ATTM_Ponds[i]   > 0.0 : self.Ponds_age[i,0]   = 1.
+    
+    if self.initialize['Initial_Cohort_Age_Figure'].lower() == 'yes':
 
-
-    if PLOT == 'TRUE' or FIGURE == 'TRUE':
         # ----------------------------------------------------------------------------------
         Wet_NPG_age = np.reshape(self.Wet_NPG_age[:,0], [self.ATTM_nrows, self.ATTM_ncols])
         Wet_LCP_age = np.reshape(self.Wet_LCP_age[:,0], [self.ATTM_nrows, self.ATTM_ncols])
@@ -79,55 +79,50 @@ def initial_cohort_age(self, PLOT, FIGURE):
         #----------------------------------------------------------------------------------
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Wet_NPG_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Wetland Non-polygonal Ground Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetNPG_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Wet_NPG_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Wetland Non-polygonal Ground Age')
             pl.savefig('./Wet_NPG/Wet_NPG_age.png', format = 'png')
             self.Wet_NPG_age.tofile('./Wet_NPG/Wet_NPG_Age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Wet_LCP_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Wetland Low Center Polygon Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetLCP_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Wet_LCP_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Wetland Low Center Polygon Age')
             pl.savefig('./Wet_LCP/Wet_LCP_age.png', format = 'png')
             self.Wet_LCP_age.tofile('./Wet_LCP/Wet_LCP_age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Wet_CLC_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Wetland Coalescent Low Center Polygon Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetCLC_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Wet_CLC_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Wetland Coalescent Low Center Polygon Age')
             pl.savefig('./Wet_CLC/Wet_CLC_age.png', format = 'png')
             self.Wet_CLC_age.tofile('./Wet_CLC/Wet_CLC_age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Wet_FCP_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Wetland Flat Center Polygon Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetFCP_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Wet_FCP_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Wetland Flat Center Polygon Age')
             pl.savefig('./Wet_FCP/Wet_FCP_age.png', format = 'png')
             self.Wet_FCP_age.tofile('./Wet_FCP/Wet_FCP_age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Wet_HCP_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Wetland High Center Polygon Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetHCP_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Wet_HCP_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Wetland High Center Polygon Age')
             pl.savefig('./Wet_HCP/Wet_HCP_age.png', format = 'png')
             self.Wet_HCP_age.tofile('./Wet_HCP/Wet_HCP_age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         ## # ----------------------------------------------------------------------------------
         ## fig = pl.figure()
         ## pl.imshow(Gra_NPG_age, interpolation='nearest', cmap='bone')
@@ -201,25 +196,23 @@ def initial_cohort_age(self, PLOT, FIGURE):
         ## if PLOT == 'TRUE':
         ##     pl.show()
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Lakes_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Lakes Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['Lakes_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Lakes_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Lakes Age')
             pl.savefig('./Lakes/Lakes_age.png', format = 'png')
             self.Lakes_age.tofile('./Lakes/Lakes_age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(Ponds_age, interpolation='nearest', cmap='bone')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        pl.title('Ponds Age')
-        if FIGURE == 'TRUE':
+        if self.initialize['Ponds_Age'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(Ponds_age, interpolation='nearest', cmap='bone')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.title('Ponds Age')
             pl.savefig('./Ponds/Ponds_age.png', format = 'png')
             self.Ponds_age.tofile('./Ponds/Ponds_age.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+
         
         os.chdir(self.control['Run_dir'])
         # ----------------------------------------------------------------------------------

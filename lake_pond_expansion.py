@@ -23,9 +23,12 @@ def lake_pond_expansion(self, element):
         # Determine the fractional amount of lake expansion
         # --------------------------------------------------
         if self.climate_expansion_lakes[element] == 1.0:
-            lake_fraction_increase = self.ATTM_Lakes[element] * self.Lake_Expansion_Constant * 2.0
+            #lake_fraction_increase = self.ATTM_Lakes[element] * self.Lake_Expansion_Constant * 2.0
+            lake_fraction_increase = self.ATTM_Lakes[element] * self.LakePond['Lake_Expansion'] * 2.0
+	    self.climate_expansion_lakes[element] = 0.0
         else:
-            lake_fraction_increase = self.ATTM_Lakes[element] * self.Lake_Expansion_Constant
+            #lake_fraction_increase = self.ATTM_Lakes[element] * self.Lake_Expansion_Constant
+            lake_fraction_increase = self.ATTM_Lakes[element] * self.LakePond['Lake_Expansion']
 
         land_available = self.ATTM_Wet_NPG[element] + self.ATTM_Wet_LCP[element] + \
                          self.ATTM_Wet_CLC[element] + self.ATTM_Wet_FCP[element] + \
@@ -160,9 +163,11 @@ def lake_pond_expansion(self, element):
         # If climate event happens, double the expansion constant
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         if self.climate_expansion_ponds[element] == 1.0:
-            pond_fraction_increase = self.ATTM_Ponds[element] * self.Lake_Expansion_Constant * 2.0
+            #pond_fraction_increase = self.ATTM_Ponds[element] * self.Lake_Expansion_Constant * 2.0
+            pond_fraction_increase = self.ATTM_Ponds[element] * self.LakePond['Pond_Expansion'] *2.0
         else:
-            pond_fraction_increase = self.ATTM_Ponds[element] * self.Lake_Expansion_Constant
+            #pond_fraction_increase = self.ATTM_Ponds[element] * self.Lake_Expansion_Constant
+            pond_fraction_increase = self.ATTM_Ponds[element] * self.LakePond['Pond_Expansion']
             
         
 
@@ -276,6 +281,37 @@ def lake_pond_expansion(self, element):
             self.ATTM_Ponds[element] = self.ATTM_Ponds[element] - not_enough_land
             
 
+#===============================================================================================
+def pond_infill(self, element, time):
+    """
+    The purpose of this module is to infill ponds at a prescribed rate with vegetation,
+    which will presumably be non-polygonal ground.
 
+    # - - -- - - - - - - -- - - - - - - - -- - - - - - - - -- - - - -- - - -
+    !!! I should double check to see if non-polygonal ground is the correct
+    !!! transition ...
+    # - - - - - - - - - - - - - - - - - --- - - - - - - - - - - - - - - - - -
 
+    This module is developed due to paper that states with warming temperatures,
+    ponds are shrinking due in part to infilling of vegetation.  Paper is in press
+    and was set out by Anna L. in March 2015.
+
+    # - - - - - -------------------------------------------------------------------
+    I think initially, I will set pond infilling to occur every time step. I might
+    try to infill when temperature in year N is greater than temperature in year N-1.
+
+    #-------------------------------------------------------------------------------
+    """
+    if self.ATTM_Ponds[element] > 0.0 and self.ATTM_Ponds[element] < 1.0:
+        # Is this the first time step? If yes, no infilling occurs
+        if time == 0:
+            pass
+        else:
+            # If Degree Days are greater than previous time step, infill
+            if self.TDD[time, element] > self.TDD[time-1, element]:
+                infill = self.ATTM_Ponds[element] * self.LakePond['Pond_Infill_Constant']
+                # Reduce Pond size and increase WetNPG size
+                self.ATTM_Ponds[element] = self.ATTM_Ponds[element] - infill
+                self.ATTM_Wet_NPG[element] = self.ATTM_Wet_NPG[element] + infill
+            
 

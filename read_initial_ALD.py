@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def read_initial_ALD(self, PLOT, FIGURE):
+def read_initial_ALD(self):
     """
     The purpose of this module is to read the initial active layer depth
     for each predisposed element in the model domain.
@@ -17,16 +17,11 @@ def read_initial_ALD(self, PLOT, FIGURE):
 
     for i in range(0, self.ATTM_nrows * self.ATTM_ncols):
         if self.ATTM_Total_Fractional_Area[i] > 0.0 :
-            chance = random.uniform(0.3, 0.75)
+            chance = random.uniform(self.Terrestrial['ALD_Distribution_Lower_Bound'],\
+                                    self.Terrestrial['ALD_Distribution_Upper_Bound'])
             self.initial_ALD_depth[i] = chance
             initial_ALD[i] = chance
-    #=========================================
-    # Information for Results Report
-    #=========================================
-    self.ALD_start_ave = np.mean(initial_ALD)
-    self.ALD_start_max = max(initial_ALD)
-    self.ALD_start_min = min(initial_ALD)
-    self.ALD_start_std = np.std(initial_ALD)
+
     #-----------------------------------------
     
     print '    done.'
@@ -35,7 +30,7 @@ def read_initial_ALD(self, PLOT, FIGURE):
     # ---------------------------------------------
     # Create desired output files, figures, plots
     # --------------------------------------------
-    if PLOT == 'TRUE' or FIGURE == 'TRUE':
+    if self.Terrestrial['ALD_Distribution_Output'].lower() == 'yes':
         # -------------------------
         # Move to Output Directory
         # -------------------------
@@ -48,11 +43,8 @@ def read_initial_ALD(self, PLOT, FIGURE):
         pl.imshow(initial_ALD, interpolation='nearest', cmap='bone')
         pl.colorbar( extend = 'max', shrink = 0.92)
         pl.title('Initial Active Layer Depth')
-        if FIGURE == 'TRUE':
-            pl.savefig('./Initialization/Initial_ALD.png', format = 'png')
-            initial_ALD.tofile('./Initialization/Initial_ALD.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+        pl.savefig('./Initialization/Initial_ALD.jpg', format = 'jpg')
+        initial_ALD.tofile('./Initialization/Initial_ALD.bin')
         pl.close()
 
         # Return to Run directory

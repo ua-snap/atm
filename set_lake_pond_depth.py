@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def set_lake_pond_depth(self, PLOT, FIGURE):
+def set_lake_pond_depth(self):
     
     """
     The purpose of this module is to set the lake and pond depths for each
@@ -23,21 +23,34 @@ def set_lake_pond_depth(self, PLOT, FIGURE):
 
     self.pond_count = 0.0       # For use in check_ponds.
 
-    
-#    self.initial_Lake_depth = np.zeros(self.ATTM_nrows * self.ATTM_ncols)
-#    self.initial_Pond_depth = np.zeros(self.ATTM_nrows * self.ATTM_ncols)
 
     self.Lake_Depth = np.zeros(self.ATTM_nrows * self.ATTM_ncols)
     self.Pond_Depth = np.zeros(self.ATTM_nrows * self.ATTM_ncols)
 
     for i in range(0, self.ATTM_nrows * self.ATTM_ncols):
-        Lake_Depth = random.uniform(2.2, 5.0)
-        Pond_Depth = random.uniform(1.25, 1.7)
+        #------------------------------------
+        # Determine Lake Depth Distribution
+        #------------------------------------
+        if self.LakePond['Lake_Distribution'].lower() == 'random':
+            Lake_Depth = random.uniform(self.LakePond['Lower_Lake_Depth'], \
+                                        self.LakePond['Upper_Lake_Depth'])
+        elif self.LakePond['Lake_Distribution'].lower() == 'uniform':
+            Lake_Depth = self.LakePond['Uniform_Lake_Depth']
+        #------------------------------------
+        # Determine Pond Depth Distribution
+        #------------------------------------
+        if self.LakePond['Pond_Distribution'].lower() == 'random':
+            Pond_Depth = random.uniform(self.LakePond['Lower_Pond_Depth'],\
+                                        self.LakePond['Upper_Pond_Depth'])
+        elif self.LakePon['Pond_Distribution'].lower() == 'uniform':
+            Pond_Depth = self.LakePond['Uniform_Pond_Depth']
+        
+        #--------------------------
+        # Set Lake and Pond Depths
+        # -------------------------
         if self.ATTM_Lakes[i] > 0. :
-#            self.initial_Lake_depth[i] = Lake_Depth
             self.Lake_Depth[i] = Lake_Depth
         if self.ATTM_Ponds[i] > 0. :
-#            self.initial_Pond_depth[i] = Pond_Depth
             self.Pond_Depth[i] = Pond_Depth
 
     print '    done. \n  '
@@ -45,36 +58,34 @@ def set_lake_pond_depth(self, PLOT, FIGURE):
     # ------------------------------------------------
     # Create output files, plots, figures if desired
     # ------------------------------------------------
-    if FIGURE == 'TRUE' or PLOT == 'TRUE':
-
+    if self.LakePond['Lake_Depth_Figure'].lower() == 'yes':
+        
         lake_depth = np.reshape(self.Lake_Depth, [self.ATTM_nrows, self.ATTM_ncols])
-        pond_depth = np.reshape(self.Pond_Depth, [self.ATTM_nrows, self.ATTM_ncols])
-
-        # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory)
 
-        # Lakes output
+        # Lakes Figure
         fig = pl.figure()
         pl.imshow(lake_depth, interpolation = 'nearest', cmap = 'bone')
         pl.colorbar( extend = 'max', shrink = 0.92)
         pl.title('Initial Lake Depths')
-        if FIGURE == 'TRUE':
-            pl.savefig('./Lakes/Initial_Lake_Depth.png', format = 'png')
-            lake_depth.tofile('./Lakes/Initial_Lake_Depth.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+        pl.savefig('./Lakes/Initial_Lake_Depth.jpg', format = 'jpg')
+        lake_depth.tofile('./Lakes/Initial_Lake_Depth.bin')
         pl.close()
 
-        # Ponds Output
+        os.chdir(self.control['Run_dir'])
+    # -----------------------------------------------------------------------------
+    if self.LakePond['Pond_Depth_Figure'].lower() == 'yes':
+
+        pond_depth = np.reshape(self.Pond_Depth, [self.ATTM_nrows, self.ATTM_ncols])
+        # Move to output directory
+        os.chdir(self.control['Run_dir']+self.Output_directory)
+        # Ponds Figure
         fig = pl.figure()
         pl.imshow(pond_depth, interpolation = 'nearest', cmap = 'bone')
         pl.colorbar( extend = 'max', shrink = 0.92)
         pl.title('Initial Pond (shallow lake) Depths')
-        if FIGURE == 'TRUE':
-            pl.savefig('./Ponds/Initial_Pond_Depth.png', format = 'png')
-            pond_depth.tofile('./Ponds/Initial_Pond_Depth.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+        pl.savefig('./Ponds/Initial_Pond_Depth.jpg', format = 'jpg')
+        pond_depth.tofile('./Ponds/Initial_Pond_Depth.bin')
         pl.close()
         
         # Return to Run Directory

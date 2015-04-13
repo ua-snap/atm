@@ -25,9 +25,10 @@ def read_met_data(self):
     import pylab as pl
     from scipy import interpolate
     from scipy import integrate
+    import datetime
     # =======================
 
-    if self.met_distribution.lower() == 'point':
+    if self.Met['met_distribution'].lower() == 'point':
         print '    Reading Meteorologic Data (Monthly T and P)'
 
         # Work flow
@@ -91,53 +92,82 @@ def read_met_data(self):
                 #print re.split('[_ .]',line)  # Works -- splitting with multiple delimiters
                 line = line.rstrip()           # removes the \n at the end
                 
-                # Calculate JD
-                if count == 0 and re.split('[_ .]', line)[2] == '01':  # assuming January of first year
-                    self.JD[count] = int(15)
-                    
-     #               count = count + 1
-                else:
-                    if count > 0 and re.split('[_ .]', line)[2] == '01':
-                        self.JD[count] = self.JD[count-1] + 30
-                    if count > 0 and re.split('[_ .]', line)[2] == '02':
-                        self.JD[count] = self.JD[count-1] + 30
-                    if count > 0 and re.split('[_ .]', line)[2] == '03':
-                        self.JD[count] = self.JD[count-1] + 29
-                    if count > 0 and re.split('[_ .]', line)[2] == '04':
-                        self.JD[count] = self.JD[count-1] + 31
-                    if count > 0 and re.split('[_ .]', line)[2] == '05':
-                        self.JD[count] = self.JD[count-1] + 31    
-                    if count > 0 and re.split('[_ .]', line)[2] == '06':
-                        self.JD[count] = self.JD[count-1] + 30
-                    if count > 0 and re.split('[_ .]', line)[2] == '07':
-                        self.JD[count] = self.JD[count-1] + 30   
-                    if count > 0 and re.split('[_ .]', line)[2] == '08':
-                        self.JD[count] = self.JD[count-1] + 32
-                    if count > 0 and re.split('[_ .]', line)[2] == '09':
-                        self.JD[count] = self.JD[count-1] + 30
-                    if count > 0 and re.split('[_ .]', line)[2] == '10':
-                        self.JD[count] = self.JD[count-1] + 30
-                    if count > 0 and re.split('[_ .]', line)[2] == '11':
-                        self.JD[count] = self.JD[count-1] + 31
-                    if count > 0 and re.split('[_ .]', line)[2] == '12':
-                        self.JD[count] = self.JD[count-1] + 31
+                if self.Met['met_file_distributed'] == 'BarrowAT_1901-2006':
+                        # Calculate JD
+                    if count == 0 : 
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                    else:
+                        d2 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                        self.JD[count] = (d2-d1).days
 
-                # Month and Year Arrays
-                self.Month[count] = re.split('[_ .]', line)[2]
-                self.Year[count]  = re.split('[_ .]', line)[3]
+                    # Month and Year Arrays
+                    self.Month[count] = re.split('[_ .]', line)[2]
+                    self.Year[count]  = re.split('[_ .]', line)[3]
 
-                # Temperature Array
-                dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
-                myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
 
-                self.Temp[count,:] = myarray.flatten()
+                    self.Temp[count,:] = myarray.flatten()
 
-                # Moving on to the next line
-                count = count + 1
+                    # Moving on to the next line
+                    count = count + 1
+
+                elif self.Met['met_file_distributed'] == 'BarrowAT_2001-2100_cccma':
+                    # Calculate JD
+                    #if count == 0 and re.split('[_ .]', line)[3] == '01':  # assuming January of first year
+                    #    self.JD[count] = int(15)
+                    if count == 0:
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[4]), \
+                                               int(re.split('[_ .]', line)[3]), 1)
+                    else:
+                        d2 = datetime.datetime(int(re.split('[_ .]', line)[4]), \
+                                               int(re.split('[_ .]', line)[3]), 1)
+                        self.JD[count] = (d2-d1).days
+
+                    # Month and Year Arrays
+                    self.Month[count] = re.split('[_ .]', line)[3]
+                    self.Year[count] = re.split('[_ .]', line)[4]
+
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+
+                    self.Temp[count,:] = myarray.flatten()
+
+                    # Moving on to the next line
+                    count = count + 1
+
+                elif self.Met['met_file_distributed'] == 'BarrowAT_2001-2100_echam5':
+                    if count == 0:
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[4]), \
+                                               int(re.split('[_ .]', line)[3]), 1)
+                    else:
+                        d2 = datetime.datetime(int(re.split('[_ .]', line)[4]), \
+                                               int(re.split('[_ .]', line)[3]), 1)
+                        self.JD[count] = (d2-d1).days
+
+                    # Month and Year Arrays
+                    self.Month[count] = re.split('[_ .]', line)[3]
+                    self.Year[count] = re.split('[_ .]', line)[4]
+
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+
+                    self.Temp[count,:] = myarray.flatten()
+
+                    # Moving on to the next line
+                    count = count + 1
 
             
         # Determine number of model time steps
-        self.ATTM_time_steps = max(self.Year) - min(self.Year)
+        self.ATTM_time_steps = max(self.Year) - min(self.Year) 
 
         # End Statement
         print '    The number of model time steps is '+str(int(self.ATTM_time_steps)) + ' years.'

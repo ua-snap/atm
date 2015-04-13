@@ -7,7 +7,9 @@ def read_archive(self):
     each archive that will take place. Ex. archive only the
     directory that you are looking for results/testing.
     """
-    print '    Reading the archive control file: ', self.archive_data
+    print '------------------------------------'
+    print ' Archiving the simulation results'
+    print ' '
     self.archive = {}
     with open(self.archive_data, 'r') as f:
         for line in f:
@@ -18,7 +20,7 @@ def read_archive(self):
 def archive(self):
 
     import tarfile
-    import os
+    import os, glob, sys
     
     """
     The purpose of this module is to archive the simulation into a compressed
@@ -36,14 +38,34 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+str('/Archive/'))
         self.archive_file.add(self.archive_time+str('_')+self.simulation_name+str('.txt'))
         # Clean the results summary
-        os.system('rm *.txt')
+        text_files = glob.glob('*.txt')
+        if len(text_files) > 0:
+            os.system('rm *.txt')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
+
+    #=================================
+    # Add All Control Files
+    #=================================
+    # Model Control
+    self.archive_file.add(sys.argv[1])
+    # Met Control
+    #self.archive_file.add(self.Met_Control)
+    # Terrestrial Cohort Information
+    #self.archive_file.add(self.Wet_NPG_Control)
+    #self.archive_file.add(self.Wet_LCP_Control)
+    #self.archive_file.add(self.Wet_CLC_Control)
+    #self.archive_file.add(self.Wet_FCP_Control)
+    #self.archive_file.add(self.Wet_HCP_Control)
+    #self.archive_file.add(self.Lake_Pond_Control)
+    # Archive Information
+    #self.archive_file.add(self.archive_data)                     
 
     #==================================
     # Add the Initialization Directory
     #----------------------------------
     if self.archive['Initialization'].lower() == 'yes':
+        self.archive_file.add(self.control['Initialize_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -54,13 +76,28 @@ def archive(self):
             self.archive_file.add('Initialization',exclude=exclude_figures) 
         # Clean the initialization directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Initialization/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
-        os.system('rm *.csv')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        csv_files = glob.glob('*.csv')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
+        if len(csv_files) > 0:
+            os.system('rm *.csv')
+        # Change to Degree Days directory
         os.chdir('./Degree_Days')
-        os.system('rm *.jpg')
+        jpg_files = glob.glob('*.jpg')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
+
+    #==================================
+    # Add the Met Control file
+    #----------------------------------
+    if self.archive['Met'].lower() == 'yes':
+        self.archive_file.add(self.control['Met_Control'])
 
     #===============================
     # Add the All_Cohorts directory
@@ -76,12 +113,20 @@ def archive(self):
             self.archive_file.add('All_Cohorts',exclude=exclude_figures) 
         # Clean the All_Cohorts directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/All_Cohorts/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -89,6 +134,7 @@ def archive(self):
     # Add the Lakes directory
     #-------------------------------
     if self.archive['Lakes'].lower() == 'yes':
+        self.archive_file.add(self.control['Lake_Pond_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -99,12 +145,20 @@ def archive(self):
             self.archive_file.add('Lakes',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Lakes/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -122,16 +176,20 @@ def archive(self):
             self.archive_file.add('Other_Cohorts',exclude=exclude_figures) 
         # Clean the All_Cohorts directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Other_Cohorts/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
-         
     #===============================
     # Add the Ponds directory
     #-------------------------------
     if self.archive['Ponds'].lower() == 'yes':
+        self.archive_file.add(self.control['Lake_Pond_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -142,12 +200,20 @@ def archive(self):
             self.archive_file.add('Ponds',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Ponds/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -155,6 +221,7 @@ def archive(self):
     # Add the Wetlands Coalescent Low Center Polygons directory
     #----------------------------------------------------------
     if self.archive['Wetlands_CLC'].lower() == 'yes':
+        self.archive_file.add(self.control['Wet_CLC_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -165,12 +232,20 @@ def archive(self):
             self.archive_file.add('Wet_CLC',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_CLC/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -178,6 +253,7 @@ def archive(self):
     # Add the Wetlands Low Center Polygons directory
     #-------------------------------------------------
     if self.archive['Wetlands_LCP'].lower() == 'yes':
+        self.archive_file.add(self.control['Wet_LCP_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -188,12 +264,20 @@ def archive(self):
             self.archive_file.add('Wet_LCP',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_LCP/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -201,6 +285,7 @@ def archive(self):
     # Add the Wetlands Flat Center Polygons directory
     #-------------------------------------------------
     if self.archive['Wetlands_FCP'].lower() == 'yes':
+        self.archive_file.add(self.control['Wet_FCP_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -211,12 +296,20 @@ def archive(self):
             self.archive_file.add('Wet_FCP',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_FCP/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -224,6 +317,7 @@ def archive(self):
     # Add the Wetlands High Center Polygons directory
     #-------------------------------------------------
     if self.archive['Wetlands_HCP'].lower() == 'yes':
+        self.archive_file.add(self.control['Wet_HCP_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -234,12 +328,20 @@ def archive(self):
             self.archive_file.add('Wet_HCP',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_HCP/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+        #    os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -247,6 +349,7 @@ def archive(self):
     # Add the Wetlands Non-Polygonal Ground directory
     #-------------------------------------------------
     if self.archive['Wetlands_NPG'].lower() == 'yes':
+        self.archive_file.add(self.control['Wet_NPG_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
         if self.archive['Figures'].lower() == 'yes':
@@ -257,12 +360,20 @@ def archive(self):
             self.archive_file.add('Wet_NPG',exclude=exclude_figures) 
         # Clean the Lakes directory of files
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_NPG/')
-        os.system('rm *.bin')
-        os.system('rm *.png')
+        bin_files = glob.glob('*.bin')
+        png_files = glob.glob('*.png')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        if len(png_files) > 0:
+            os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
-        os.system('rm *.bin')
-        os.system('rm *.jpg')
+        bin_files = glob.glob('*.bin')
+        jpg_files = glob.glob('*.jpg')
+        if len(bin_files) > 0:
+            os.system('rm *.bin')
+        #if len(jpg_files) > 0:
+            #os.system('rm *.jpg')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 

@@ -18,16 +18,22 @@ def read_control(self):
     """
     print '    Reading control file: ', self.Control_file
     self.control = {}
-    with open(self.Control_file, 'r') as f:    
+    with open(self.Control_file, 'r') as f:
         for line in f:
-            (key, val) = line.split()
-            self.control[(key)] = val
+            if line.startswith('#'):
+                continue
+            else:
+                (key, val) = line.split()
+                self.control[(key)] = val
 
+    """ Start Initialization Process """
+    self.Initialize_Control = self.control['Initialize_Control']
+    
     """ Input and Output Directories """
-    self.Run_directory    = self.control['Run_dir']
-    self.Input_directory  = self.control['Input_dir']
-    self.Output_directory = self.control['Output_dir']
-
+    self.Run_directory      = self.control['Run_dir']
+    self.Input_directory    = self.control['Input_dir']
+    self.Output_directory   = self.control['Output_dir']
+    
     """ Flag for Geotiff Layer Input & Output """
     self.Read_Geotiff     = self.control['Read_Geotiff']
     self.Write_Geotiff    = self.control['Write_Geotiff']
@@ -37,20 +43,10 @@ def read_control(self):
     self.Y_resolution            = self.control['Y_model_resolution']             # Row dimension
 
     """ Read Met Data file name """
-    self.met_distribution        = self.control['met_distribution']               # Spatial or point distribution
-    if self.met_distribution.lower() == 'point':
-        self.met_file                = self.control['met_file_point']             # Met data file, in xls format
-    else:
-        self.met_file                = self.control['met_file_distributed'] # List of GeoTiff files
-
-    print '       The meteorologic file to be used is :', self.met_file
-
-    """ Read Degree Day Calculation Method and Files """
-    self.degree_day_method       = self.control['degree_day_method']
-    self.TDD_file                = self.control['TDD_file']
-    self.FDD_file                = self.control['FDD_file']
+    self.Met_Control		 = self.control['Met_Control']
 
     """ Read Archiving / Reporting Material """
+    self.results_onscreen        = self.control['Results_onscreen']
     self.archive_simulation      = self.control['Archive_simulation']
     self.archive_data            = self.control['Archive_data']
     self.simulation_name         = self.control['Simulation_name']
@@ -58,9 +54,24 @@ def read_control(self):
 
     """ Code Testing Simulations """
     self.test_code               = self.control['Test_code']
- 
-    #
+    self.test_code_duration      = int(self.control['Test_code_duration'])	
+
+    """ File containing Terrestrial Cohorts Variables & Parameters """
+    self.Terrestrial_Control     = self.control['Terrestrial_Control']
+    self.Wet_NPG_Control         = self.control['Wet_NPG_Control']
+    self.Wet_LCP_Control         = self.control['Wet_LCP_Control']
+    self.Wet_CLC_Control         = self.control['Wet_CLC_Control']
+    self.Wet_FCP_Control         = self.control['Wet_FCP_Control']
+    self.Wet_HCP_Control         = self.control['Wet_HCP_Control']
+
+    """ File containing information about Lake and Pond Variables and Parameters """
+    self.Lake_Pond_Control       = self.control['Lake_Pond_Control']
+
+
+
+    
+    # ------------------------------
     # Finished Reading Control File
-    # 
+    # ------------------------------
     print '    done.'
     print ' '

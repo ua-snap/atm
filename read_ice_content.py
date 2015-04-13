@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def read_ice_content(self, PLOT, FIGURE, DISTRIBUTION):
+def read_ice_content(self):
     """
     The purpose of this module is to read (input) the ground ice
     content of each predisposed element.
@@ -23,20 +23,20 @@ def read_ice_content(self, PLOT, FIGURE, DISTRIBUTION):
             self.ice[i] = 'none'
             ice[i] = 0.0          # redundant, but explicit
         else:
-            if DISTRIBUTION == 'POOR':
+            if self.Terrestrial['Ice_Distribution'].lower() == 'poor':
                 self.ice[i] = 'poor'
                 ice[i] = 1.
-            elif DISTRIBUTION == 'PORE':
+            elif self.Terrestrial['Ice_Distribution'].lower() == 'pore':
                 self.ice[i] = 'poor'
                 ice[i] = 2.
-            elif DISTRIBUTION == 'WEDGE':
+            elif self.Terrestrial['Ice_Distribution'].lower() == 'wedge':
                 self.ice[i] = 'wedge'
                 ice[i] = 3.
-            elif DISTRIBUTION == 'MASSIVE':
+            elif self.Terrestrial['Ice_Distribution'].lower() == 'massive':
                 self.ice[i] = 'massive'
                 ice[i] = 4.
-            else:
-                self.ice[i] = random.choice(ice_content)  # Distribution == "RANDOM"
+            elif self.Terrestrial['Ice_Distribution'].lower() == 'random':
+                self.ice[i] = random.choice(ice_content)  
                 if self.ice[i] == 'poor'    : ice[i] = 1.
                 if self.ice[i] == 'pore'    : ice[i] = 2.
                 if self.ice[i] == 'wedge'   : ice[i] = 3.
@@ -48,8 +48,8 @@ def read_ice_content(self, PLOT, FIGURE, DISTRIBUTION):
     #=================================================================
     # Output figures, files, plots
     #=================================================================
-    if PLOT == 'TRUE' or FIGURE == 'TRUE':
-        
+#    if PLOT == 'TRUE' or FIGURE == 'TRUE':
+    if self.Terrestrial['Ice_Distribution_Figure'].lower() == 'yes':    
         ice_plot = np.reshape(ice, [self.ATTM_nrows, self.ATTM_ncols])
         # ---------------------------
         # Change to output directory
@@ -63,11 +63,8 @@ def read_ice_content(self, PLOT, FIGURE, DISTRIBUTION):
         pl.imshow(ice_plot, interpolation='nearest', cmap='bone')
         pl.colorbar( extend = 'max', shrink = 0.92)
         pl.title('Ground Ice Content')
-        if FIGURE == 'TRUE':
-            pl.savefig('./Initialization/Ground_Ice_Content.png', format = 'png')
-            ice_plot.tofile('./Initialization/Ground_Ice_Content.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+        pl.savefig('./Initialization/Ground_Ice_Content.png', format = 'png')
+        ice_plot.tofile('./Initialization/Ground_Ice_Content.bin')
         pl.close()
 
         # ----------------------------

@@ -16,7 +16,7 @@ FDD   : Freezing Degree days
 h = (alpha * sqrt(FDD))/100.0  
 """
 def ice_thickness(self, time, element):
-    if self.met_distribution.lower() == 'point':
+    if self.Met['met_distribution'].lower() == 'point':
         self.ice_thickness[element] = (self.Lake_Ice_Depth_alpha[element] * \
                                     np.sqrt(-1.*self.degree_days[time,2]))/100.
     else:

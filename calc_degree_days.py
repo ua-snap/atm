@@ -4,7 +4,7 @@ import pylab as pl
 from scipy import interpolate
 from scipy import integrate
 
-def calc_degree_days(self, PLOT, FIGURE):
+def calc_degree_days(self):
     """
     The purpose of this module is to calculate the number of degree-days,
     both freezing and thawing for each simulation year.
@@ -22,7 +22,7 @@ def calc_degree_days(self, PLOT, FIGURE):
     function also returns the error (I believe) at location [1].
     """
 
-    if self.met_distribution.lower() == "point":
+    if self.Met['met_distribution'].lower() == "point":
         print '   Calculating Thawing and Freezing Degree Days'
 
         self.dd_year = np.arange(min(self.Year), max(self.Year))
@@ -61,7 +61,7 @@ def calc_degree_days(self, PLOT, FIGURE):
         print '    done. \n  '
 
         """ Save/Show figure if desired """
-        if PLOT == 'TRUE' or FIGURE == 'TRUE':
+        if self.Met['Degree_Day_Output'].lower() == 'yes':
 
             os.chdir(self.control['Run_dir']+self.Output_directory+'/Initialization')
 
@@ -69,12 +69,9 @@ def calc_degree_days(self, PLOT, FIGURE):
             pl.plot(self.degree_days[:,0], self.degree_days[:,1])
             pl.plot(self.degree_days[:,0], self.degree_days[:,2])
             pl.title('Thawing and Freezing Degree Days')
-            if FIGURE == 'TRUE':
-                pl.savefig("Degree_days_calculation.png", format = 'png')
-                np.savetxt('Degree_Day_calculation.csv', self.degree_days, delimiter=', ', newline='\n')
-            if PLOT == 'TRUE':
-                pl.show()
-
+            pl.savefig("Degree_days_calculation.png", format = 'png')
+            np.savetxt('Degree_Day_calculation.csv', self.degree_days, delimiter=', ', newline='\n')
+ 
             os.chdir(self.control['Run_dir'])
     else:
         ###################################################
@@ -83,11 +80,9 @@ def calc_degree_days(self, PLOT, FIGURE):
         print '   Calculating Thawing and Freezing Degree Days -- Spatial Distribution'
         
         self.dd_year = np.arange(min(self.Year), max(self.Year))
-        self.TDD     = np.zeros([np.size(self.dd_year), (self.ATTM_nrows * self.ATTM_ncols)])
-        self.FDD     = np.zeros([np.size(self.dd_year), (self.ATTM_nrows * self.ATTM_ncols)])
+        self.TDD     = np.zeros([np.size(self.dd_year)+1, (self.ATTM_nrows * self.ATTM_ncols)])
+        self.FDD     = np.zeros([np.size(self.dd_year)+1, (self.ATTM_nrows * self.ATTM_ncols)])
 
-        
-        
         ###################################
         #   Start to Loop over elements   #
         ###################################
@@ -99,19 +94,18 @@ def calc_degree_days(self, PLOT, FIGURE):
         for element in range(self.ATTM_nrows * self.ATTM_ncols):
             year = min(self.Year)
             k = 0
-             
+
             # The spline function
-            spline = interpolate.UnivariateSpline(self.JD, self.Temp[:,element], s = 20)
-                                    
+            spline = interpolate.UnivariateSpline(self.JD, self.Temp[:,element], s = 100)
+            
             # Main loop in module
-            #print np.size(spline.roots())
+
             if np.size(spline.roots()) == 0:
                 self.TDD[:,element] = 0.0
                 self.FDD[:,element] = 0.0
             else:
                 #k = 0
                 for i in range(0, np.size(spline.roots())-2, 2):
-
                     #print 'element, i-value', element, i
                     # Determine the location where the spline intersects y=0
                     # Note: This is based upon looking at data prior to writing module, not
@@ -141,7 +135,7 @@ def calc_degree_days(self, PLOT, FIGURE):
         # Create plots for animations
         #
         ######################################################################################
-        if FIGURE == 'TRUE':
+        if self.Met['Degree_Day_Output'].lower() == 'yes':
             
             os.chdir(self.control['Run_dir']+self.Output_directory+'/Initialization/Degree_Days')
             year = np.arange(min(self.Year), max(self.Year), dtype = np.int16)
@@ -158,21 +152,21 @@ def calc_degree_days(self, PLOT, FIGURE):
                 # Thawing Degree Days
                 #--------------------------------------------------------
                 fig = pl.figure()
-                pl.imshow(TDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = 0.0, vmax = 1000.0)
+                pl.imshow(TDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = 0.0, vmax = 1250.0)
                 pl.title('Thawing Degree-Days - '+str(year_plot))
                 pl.colorbar(extend = 'neither', shrink = 0.92)
-                pl.savefig('Thawing_Degree_Days_'+str(year_plot)+'.jpg', format = 'jpg')
-                TDD_plot.tofile('Thawing_Degree_Days_'+str(year_plot)+'.bin')
+                pl.savefig(self.Met['TDD_Output']+'_'+str(year_plot)+'.jpg', format = 'jpg')
+                TDD_plot.tofile(self.Met['TDD_Output']+'_'+str(year_plot)+'.bin')
                 pl.close()
                 #--------------------------------------------------------
                 # Freezing Degree Days
                 #--------------------------------------------------------
                 fig = pl.figure()
-                pl.imshow(FDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = -6000.0, vmax = -3000.0)
+                pl.imshow(FDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = -6000.0, vmax = -2000.0)
                 pl.title('Freezing Degree-Days -'+str(year_plot))
                 pl.colorbar(extend = 'neither', shrink = 0.92)
-                pl.savefig('Freezing_Degree_Days_'+str(year_plot)+'.jpg', format = 'jpg')
-                FDD_plot.tofile('Freezing_Degree_Days_'+str(year_plot)+'.bin')
+                pl.savefig(self.Met['FDD_Output']+'_'+str(year_plot)+'.jpg', format = 'jpg')
+                FDD_plot.tofile(self.Met['FDD_Output']+'_'+str(year_plot)+'.bin')
                 pl.close()
 
             os.chdir(self.control['Run_dir'])

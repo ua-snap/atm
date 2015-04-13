@@ -4,17 +4,16 @@ import pylab as pl
 import matplotlib.animation as animation
 import subprocess
 
-def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
-                           Wet_HCP, Gra_NPG, Gra_LCP, Gra_FCP, Gra_HCP,
-                           Shr_NPG, Shr_LCP, Shr_FCP, Shr_HCP, Ponds,
-                           Lakes):
+def Output_cohorts_by_year(self, time):#, Gra_NPG, Gra_LCP, Gra_FCP, Gra_HCP,
+                           #Shr_NPG, Shr_LCP, Shr_FCP, Shr_HCP):#, Ponds,
+                          # Lakes):
 
     #=======================================
     # OUTPUT FIGURES
     #----------------------------------------
     # Wetland Non-Polygonal Ground (meadow)
     # ---------------------------------------
-    if Wet_NPG == 'TRUE':
+    if self.WetNPG['Figures'].lower() == 'yes':
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_NPG/Year_Cohorts')
 
@@ -37,7 +36,7 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
     # ---------------------------------------
     # Wetland Low Center Polygons
     # ---------------------------------------
-    if Wet_LCP == 'TRUE':
+    if self.WetLCP['Figures'].lower() == 'yes':
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_LCP/Year_Cohorts')
 
@@ -60,7 +59,7 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
     # ---------------------------------------
     # Wetland Coalescent Low Center Polygons
     # ---------------------------------------
-    if Wet_CLC == 'TRUE':
+    if self.WetCLC['Figures'].lower() == 'yes' :
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_CLC/Year_Cohorts')
 
@@ -83,7 +82,7 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
     # ---------------------------------------
     # Wetland Flat Center Polygons
     # ---------------------------------------
-    if Wet_FCP == 'TRUE':
+    if self.WetFCP['Figures'].lower() == 'yes' :
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_FCP/Year_Cohorts')
 
@@ -106,7 +105,7 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
     # ---------------------------------------
     # Wetland High Center Polygons
     # ---------------------------------------
-    if Wet_HCP == 'TRUE':
+    if self.WetHCP['Figures'].lower() == 'yes':
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_HCP/Year_Cohorts')
 
@@ -129,7 +128,7 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
     # ---------------------------------------
     # Ponds
     # ---------------------------------------
-    if Ponds == 'TRUE':
+    if self.LakePond['Pond_Figures'].lower() == 'yes':
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Ponds/Year_Cohorts')
 
@@ -152,7 +151,7 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
     # ---------------------------------------
     # Lakes
     # ---------------------------------------
-    if Lakes == 'TRUE':
+    if self.LakePond['Lake_Figures'].lower() == 'yes':
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Lakes/Year_Cohorts')
 
@@ -175,12 +174,12 @@ def Output_cohorts_by_year(self, time, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP,
 ################################
 # Animation of Fractional Area #
 ################################
-def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_NPG, Gra_LCP, Gra_FCP,
-                        Gra_HCP, Shr_NPG, Shr_LCP, Shr_FCP, Shr_HCP, Ponds, Lakes):
+def write_Fractions_avi(self):#, Gra_NPG, Gra_LCP, Gra_FCP, Gra_HCP, Shr_NPG, Shr_LCP,
+                        #Shr_FCP, Shr_HCP, Ponds, Lakes):
     # -----------------------------
     # Wetland Non-Polygonal Ground
     # -----------------------------
-    if Wet_NPG == 'TRUE':
+    if self.WetNPG['Movie'].lower() == 'yes' and self.WetNPG['Figures'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_NPG/Year_Cohorts')
         # Write AVI file
@@ -190,7 +189,7 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
     # ---------------------------
     # Wetland Low Center Polygon
     # ---------------------------
-    if Wet_LCP == 'TRUE':
+    if self.WetLCP['Movie'].lower() == 'yes' and self.WetLCP['Figures'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_LCP/Year_Cohorts')
         # Write AVI file
@@ -200,7 +199,7 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
     # --------------------------------------
     # Wetland Coalescent Low Center Polygon
     # --------------------------------------
-    if Wet_CLC == 'TRUE':
+    if self.WetCLC['Movie'].lower() == 'yes' and self.WetCLC['Figures'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_CLC/Year_Cohorts')
         # Write AVI file
@@ -210,7 +209,7 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
     # -----------------------------
     # Wetland Flat Center Polygon
     # -----------------------------
-    if Wet_FCP == 'TRUE':
+    if self.WetFCP['Figures'].lower() == 'yes' and self.WetFCP['Movie'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_FCP/Year_Cohorts')
         # Write AVI file
@@ -220,7 +219,7 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
     # ----------------------------
     # Wetland High Center Polygon
     # ----------------------------
-    if Wet_HCP == 'TRUE':
+    if self.WetHCP['Movie'].lower() == 'yes' and self.WetHCP['Figures'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_HCP/Year_Cohorts')
         # Write AVI file
@@ -230,7 +229,7 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
     # -----------------------------
     # Ponds
     # -----------------------------
-    if Ponds == 'TRUE':
+    if self.LakePond['Pond_Figures'].lower == 'yes' and self.LakePond['Pond_Movie'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Ponds/Year_Cohorts')
         # Write AVI file
@@ -238,9 +237,9 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
         # Move to Run directory
         os.chdir(self.control['Run_dir'])
     # ----------------------------
-    # Rivers
+    # Lakes
     # ----------------------------
-    if Lakes == 'TRUE':
+    if self.LakePond['Lake_Figures'].lower() == 'yes' and self.LakePond['Lake_Movie'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Lakes/Year_Cohorts')
         # Write AVI file
@@ -248,12 +247,10 @@ def write_Fractions_avi(self, Wet_NPG, Wet_LCP, Wet_CLC, Wet_FCP, Wet_HCP, Gra_N
         # Move to Run directory
         os.chdir(self.control['Run_dir'])
 
-
-    
 #---------------------------------------------------------------------------------
-def dominant_fractional_plot(self, time, FIGURE):
+def dominant_fractional_plot(self, time):
+    if self.Terrestrial['Figure'].lower() == 'yes':
 
-    if FIGURE == 'TRUE' :
         # Change to Output Directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/All_Cohorts/Year_Cohorts')
 
@@ -286,9 +283,9 @@ def dominant_fractional_plot(self, time, FIGURE):
         os.chdir(self.control['Run_dir'])
         
 #---------------------------------------------------------------------------------
-def dominant_cohort(self, FIGURE):
+def dominant_cohort(self):
 
-    if FIGURE == 'TRUE' :
+    if self.Terrestrial['Figure'].lower() == 'yes':
         self.dominant_cohort = np.zeros([self.ATTM_nrows * self.ATTM_ncols])
 
         ## # Urban [0], Rivers [1], Wet_NPG [2], Wet_LCP [3], Wet_CLC [4], Wet_FCP [5], Wet_HCP [6],
@@ -334,8 +331,9 @@ def dominant_cohort(self, FIGURE):
 # Animation of Dominant Fractional Area #
 #########################################
 
-def write_Dominant_Cohort_avi(self, MOVIE):
-    if MOVIE == 'TRUE':
+def write_Dominant_Cohort_avi(self):
+
+    if self.Terrestrial['Movie'].lower() == 'yes' and self.Terrestrial['Figure'].lower() == 'yes':
         # Move to output directory
         os.chdir(self.control['Run_dir']+self.Output_directory+'/All_Cohorts/Year_Cohorts')
         # Write AVI file

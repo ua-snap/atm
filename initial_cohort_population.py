@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def initial_cohort_population(self, PLOT, FIGURE):
+def initial_cohort_population(self):
     # ----------------------------------------------------------------------------
     # Note -- in this Barrow example:
     # ATTM Model domain is 1000m by 1000m (self.Y_resolution, self.X_resolution)
@@ -103,7 +103,8 @@ def initial_cohort_population(self, PLOT, FIGURE):
             # ===================================
             count = count +1
 
-    if PLOT == 'TRUE' or FIGURE == 'TRUE':
+#    if PLOT == 'TRUE' or FIGURE == 'TRUE':
+    if self.initialize['Initial_Cohort_Distribution_Figure'].lower() == 'yes':
     
         # Files for plotting & reference #
         ATTM_Wet_NPG_plot =  np.reshape(self.ATTM_Wet_NPG, [int(self.ATTM_nrows), int(self.ATTM_ncols)])
@@ -123,106 +124,95 @@ def initial_cohort_population(self, PLOT, FIGURE):
         #-----------------------------------------------------------------------
         # Create Figures, Plots, and Binary files for each cohort
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_NPG_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Wetland Non-Polygonal Ground Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetNPG_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_NPG_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Wetland Non-Polygonal Ground Initial Cohort Distribution')
             pl.savefig('./Wet_NPG/Initial_Wet_NPG.png', format = 'png')
             self.ATTM_Wet_NPG.tofile('./Wet_NPG/Wet_NPG_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_LCP_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Wetland Low Center Polygon Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetLCP_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_LCP_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Wetland Low Center Polygon Initial Cohort Distribution')
             pl.savefig('./Wet_LCP/Initial_Wet_LCP.png', format = 'png')
             self.ATTM_Wet_LCP.tofile('./Wet_LCP/Wet_LCP_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_CLC_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Wetland Coalescent Low Center Polygon Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetCLC_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_CLC_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Wetland Coalescent Low Center Polygon Initial Cohort Distribution')
             pl.savefig('./Wet_CLC/Initial_Wet_CLC.png', format = 'png')
             self.ATTM_Wet_CLC.tofile('./Wet_CLC/Wet_CLC_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_FCP_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Wetland Flat Center Polygon Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetFCP_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_FCP_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Wetland Flat Center Polygon Initial Cohort Distribution')
             pl.savefig('./Wet_FCP/Initial_Wet_FCP.png', format = 'png')
             self.ATTM_Wet_FCP.tofile('./Wet_FCP/Wet_FCP_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_HCP_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Wetland High Center Polygon Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['WetHCP_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_HCP_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Wetland High Center Polygon Initial Cohort Distribution')
             pl.savefig('./Wet_HCP/Initial_Wet_HCP.png', format = 'png')
             self.ATTM_Wet_HCP.tofile('./Wet_HCP/Wet_HCP_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Ponds_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Ponds Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['Ponds_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Ponds_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Ponds Initial Cohort Distribution')
             pl.savefig('./Ponds/Initial_Ponds.png', format = 'png')
             self.ATTM_Ponds.tofile('./Ponds/Ponds_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Lakes_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Lakes Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['Lakes_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Lakes_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Lakes Initial Cohort Distribution')
             pl.savefig('./Lakes/Initial_Lakes.png', format = 'png')
             self.ATTM_Lakes.tofile('./Lakes/Lakes_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Rivers_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Rivers Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['Rivers_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Rivers_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Rivers Initial Cohort Distribution')
             pl.savefig('./Other_Cohorts/Initial_Rivers.png', format = 'png')
             self.ATTM_Rivers.tofile('./Other_Cohorts/Rivers_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Urban_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('Urban Area Initial Cohort Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['Urban_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Urban_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('Urban Area Initial Cohort Distribution')
             pl.savefig('./Other_Cohorts/Initial_Urban.png', format = 'png')
             self.ATTM_Urban.tofile('./Other_Cohorts/Urban_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Total_plot, interpolation = 'nearest', cmap= 'bone')
-        pl.colorbar(extend = 'max', shrink = 0.92)
-        pl.title('All Cohorts Combined Distribution')
-        if FIGURE == 'TRUE':
+        if self.initialize['All_Cohorts_Figure'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Total_plot, interpolation = 'nearest', cmap= 'bone')
+            pl.colorbar(extend = 'max', shrink = 0.92)
+            pl.title('All Cohorts Combined Distribution')
             pl.savefig('./All_Cohorts/Initial_Total_Cohorts.png', format = 'png')
             self.ATTM_Total.tofile('./All_Cohorts/Total_initial_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # ----------------------------------------------------------------------
-
         # Return to Run Directory
         os.chdir(self.control['Run_dir'])

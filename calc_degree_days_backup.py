@@ -101,7 +101,7 @@ def calc_degree_days(self, PLOT, FIGURE):
             k = 0
              
             # The spline function
-            spline = interpolate.UnivariateSpline(self.JD, self.Temp[:,element], s = 20)
+            spline = interpolate.UnivariateSpline(self.JD, self.Temp[:,element], s = 25)
                                     
             # Main loop in module
             #print np.size(spline.roots())

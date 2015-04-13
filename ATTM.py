@@ -126,6 +126,7 @@ import climate_expansion_arrays
 import set_pond_growth_array
 import set_protective_layer
 import set_initial_cumulative_probability
+import initialize
 import cohorts
 import check_climate_event
 import check_water_climate
@@ -175,64 +176,57 @@ class ATTM(object):
         print ' Initializing ATTM'
         print '==================='
         read_control.read_control(self)
+        initialize.initialize(self)
         read_layers.read_layers(self)
         model_domain.model_domain(self)
         create_attm_cohort_arrays.create_attm_cohort_arrays(self)
-        initial_cohort_population.initial_cohort_population(self, PLOT = 'FALSE', FIGURE = 'TRUE')
-        initial_cohort_check.initial_cohort_check(self, PLOT = 'FALSE', FIGURE = 'TRUE')
+        initial_cohort_population.initial_cohort_population(self)
+        initial_cohort_check.initial_cohort_check(self)
         cohort_present.cohort_present(self)
-
-        #_______________________________________
+         
+        #=======================================
         # READ MET Data & Calculate Degree Days
-        #_______________________________________
-        read_met_data.read_met_data(self)
-        if self.degree_day_method.lower() == 'read':    # 'Read' file or 'Calc' from geotiff input
-            read_degree_days.read_degree_days(self, FIGURE = 'FALSE')
-        else:
-            calc_degree_days.calc_degree_days(self, PLOT = 'FALSE', FIGURE = 'TRUE')
-        initial_cohort_age.initial_cohort_age(self, PLOT = 'FALSE', FIGURE = 'TRUE')
+        #=======================================
+        initialize.Met(self)
 
-        
-        print '====================================='
-        print ' Initializing Terrestrial Properties'
-        print '====================================='
-        read_ice_content.read_ice_content(self, PLOT = 'FALSE', FIGURE = 'TRUE', DISTRIBUTION = 'WEDGE')
-        read_drainage_efficiency.read_drainage_efficiency(self, PLOT = 'FALSE', FIGURE = 'TRUE', DISTRIBUTION = 'BELOW')
-        read_initial_ALD.read_initial_ALD(self, PLOT = 'FALSE', FIGURE = 'TRUE') 
-        set_ALD_constant.set_ALD_constant(self, PLOT = 'FALSE', FIGURE = 'TRUE')
-        set_ALD_array.set_ALD_array(self)
-        
         print '=================================== '
         print ' Initializing Lake & Pond Properties'
         print '===================================='
-        set_lake_pond_depth.set_lake_pond_depth(self, PLOT = 'FALSE', FIGURE = 'TRUE')
-        set_lake_expansion_constant.set_lake_expansion_constant(self)
+        initialize.LakePond(self)
+        set_lake_pond_depth.set_lake_pond_depth(self)
         set_lake_ice_depth_constant.set_lake_ice_depth_constant(self)
         set_ice_thickness_array.set_ice_thickness_array(self)
         climate_expansion_arrays.set_climate_expansion_arrays(self)
         set_pond_growth_array.set_pond_growth_array(self)
+
+        print '====================================='
+        print ' Initializing Terrestrial Properties'
+        print '====================================='
+        initialize.Terrestrial(self)
+        read_ice_content.read_ice_content(self)
+        read_drainage_efficiency.read_drainage_efficiency(self)
+        read_initial_ALD.read_initial_ALD(self)
+        set_ALD_constant.set_ALD_constant(self)
+        set_ALD_array.set_ALD_array(self)
+        set_protective_layer.set_protective_layer(self)
+        set_initial_cumulative_probability.set_initial_cumulative_probability(self)
+        # Initializing Terrestrial Cohort Properties 
+        initialize.Wet_NPG(self)
+        initialize.Wet_LCP(self)
+        initialize.Wet_CLC(self)
+        initialize.Wet_FCP(self)
+        initialize.Wet_HCP(self)
+        # Other needed information [in the future]
+        initial_cohort_age.initial_cohort_age(self)
         
 
-        print '====================================================='
-        print ' Initializing Combined Terrestrial / Lake Properties '
-        print '====================================================='
-        set_protective_layer.set_protective_layer(self, PLOT = 'FALSE', FIGURE = 'FALSE')
-        set_initial_cumulative_probability.set_initial_cumulative_probability(self)
 
-        print '=========================='
-        print ' Starting the MAIN LOOP '
-        print '=========================='
+        print '=================================================='
+        print '            Starting the MAIN LOOP '
+        print '=================================================='
 
-        # - - - - - - - - - - - - - - - - - - -
-        # Shorten simulation length if testing
-        # - - - - - - - - - - - - - - - - - - -
-        if self.test_code.lower() == 'yes':
-            stop = 5
-        else:
-            stop = int(self.ATTM_time_steps)
-            
-        #for time in range(0, int(self.ATTM_time_steps)):
-        for time in range(0, stop):
+        initialize.run(self)
+        for time in range(0, self.stop):
             if time == 0:
                 cohorts.initial(self)
             print '    at time step: ', time
@@ -240,12 +234,7 @@ class ATTM(object):
             # ++++++++++++++++++++++++++++++++++++++
             # Check for significant climatic event
             # ++++++++++++++++++++++++++++++++++++++
-            climate_blocks = 'RANDOM'          # Can be either 'RANDOM' (0,20) or a numerical value
-            climate_event_probability = 0.01    # (0.013 = 1/75 chance event will happen on a given year)
-            # Check sub-model domains (block by block influence)
-            check_climate_event.check_climate_event(self, climate_blocks = climate_blocks,
-                                                    climate_event_probability = climate_event_probability)
-            
+            check_climate_event.check_climate_event(self)            
            
             # ----------------------------------------------------------
             # Looping over elements
@@ -259,9 +248,10 @@ class ATTM(object):
                 cohort_start = cohort_check.cohort_start(self, element, time)
                 
                 # ----------------------------------------------------
-                # Expand lake & ponds by prescribed rate
+                # Expand/Infill lake & ponds by prescribed rates
                 # ----------------------------------------------------
                 lake_pond_expansion.lake_pond_expansion(self, element)
+                lake_pond_expansion.pond_infill(self, element, time)
                 
                 # ----------------------------------------------------------
                 # Set active layer depth
@@ -284,16 +274,15 @@ class ATTM(object):
                 # ------------------------------
                 # Cycle through ponds and lakes
                 # ------------------------------
-                check_Ponds.check_Ponds(self, element, time, growth_time_required = 3)
+                check_Ponds.check_Ponds(self, element, time)
                 check_Lakes.check_Lakes(self, element, time)
-                
-                
+                 
                 # -------------------------------------------------
                 # Cohort Fraction Check (mass balance of cohorts)
                 # -------------------------------------------------
                 cohort_check.cohort_check(self, element, time, cohort_start)
 
-                if time == stop-1:
+                if time == self.stop-1:
                     cohorts.final(self)
                     
             # ========================================================================
@@ -301,40 +290,26 @@ class ATTM(object):
             # ========================================================================
             
             # ========================================================================
-            # OUTPUT RESULTS
+            # OUTPUT RESULTS (if requested)
             # ========================================================================
-
             #  - - - - - - - - -
             # Fractional Areas
             #  - - - - - - - - -
-            Output_cohorts_by_year.Output_cohorts_by_year(self, time, Wet_NPG = 'TRUE', Wet_LCP = 'TRUE',
-                                                          Wet_CLC = 'TRUE', Wet_FCP = 'TRUE', Wet_HCP = 'TRUE',
-                                                          Gra_NPG = 'FALSE', Gra_LCP = 'FALSE', Gra_FCP = 'FALSE',
-                                                          Gra_HCP = 'FALSE', Shr_NPG = 'FALSE', Shr_LCP = 'FALSE',
-                                                          Shr_FCP = 'FALSE', Shr_HCP = 'FALSE', Ponds = 'TRUE',
-                                                          Lakes = 'TRUE')
-
+            Output_cohorts_by_year.Output_cohorts_by_year(self, time)
             #  - - - - - - - - - - - - -
             # Dominant Fractional Area
             #  - - - - - - - - - - - - - 
-            Output_cohorts_by_year.dominant_cohort(self, FIGURE = 'TRUE')
-            Output_cohorts_by_year.dominant_fractional_plot(self, time, FIGURE = 'TRUE')
-                                                        
+            Output_cohorts_by_year.dominant_cohort(self)                 # Terrestrial_Control
+            Output_cohorts_by_year.dominant_fractional_plot(self, time)  # Terrestrial_Control
 
-        # ===================
-        # OUTPUT ANIMATIONS
-        # ===================
-
+        # =================================
+        # OUTPUT ANIMATIONS (if requested)
+        # =================================
         # - - - - - - - - - - - - - - -
         # Fractional Area of Cohorts
         # - - - - - - - - - - - - - - - -
-        Output_cohorts_by_year.write_Fractions_avi(self, Wet_NPG = 'TRUE', Wet_LCP = 'TRUE', Wet_CLC = 'TRUE',
-                                                   Wet_FCP = 'TRUE', Wet_HCP = 'TRUE', Gra_NPG = 'FALSE',
-                                                   Gra_LCP = 'FALSE', Gra_FCP = 'FALSE', Gra_HCP = 'FALSE',
-                                                   Shr_NPG = 'FALSE', Shr_LCP = 'FALSE', Shr_FCP = 'FALSE',
-                                                   Shr_HCP = 'FALSE', Ponds = 'TRUE', Lakes = 'TRUE')
-
-        Output_cohorts_by_year.write_Dominant_Cohort_avi(self, MOVIE = 'TRUE')
+        Output_cohorts_by_year.write_Fractions_avi(self)
+        Output_cohorts_by_year.write_Dominant_Cohort_avi(self) # Terrestrial_Control
 
         # -------------------
         # Simulation End Time
@@ -344,7 +319,8 @@ class ATTM(object):
         #===========================
         # Output Simulation Results
         #===========================
-        results.on_screen(self)
+        if self.results_onscreen.lower() == 'yes':
+            results.on_screen(self)
         if self.archive_simulation.lower() == 'yes':
             results.on_file(self)
 
@@ -362,9 +338,9 @@ class ATTM(object):
             archive.read_archive(self)
             archive.archive(self)
             
-
-        print '\nSimulation Complete.\n'
-        
+        print '----------------------------------------'
+        print '        Simulation Complete             '
+        print '----------------------------------------'        
         
 #_______________________________________________________________________________
 Variable = ATTM()

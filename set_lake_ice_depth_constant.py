@@ -36,6 +36,10 @@ def set_lake_ice_depth_constant(self):
             self.ATTM_Wet_LCP[i] + self.ATTM_Wet_CLC[i] + self.ATTM_Wet_FCP[i] +
             self.ATTM_Wet_HCP[i] + self.ATTM_Rivers[i] + self.ATTM_Urban[i]) > 0.0:
 
-            self.Lake_Ice_Depth_alpha[i] = random.uniform(2.31,2.55)
+            if self.LakePond['ice_thickness_distribution'].lower == 'uniform':
+                self.Lake_Ice_Depth_alpha[i] = self.LakePond['ice_thickness_uniform_alpha']
+            elif self.LakePond['ice_thickness_distribution'].lower() == 'random':
+                self.Lake_Ice_Depth_alpha[i] = random.uniform(self.LakePond['Lower_ice_thickness_alpha'],\
+                                                              self.LakePond['Upper_ice_thickness_alpha'])
     
     print '   done. \n  '

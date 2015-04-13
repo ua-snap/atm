@@ -17,7 +17,7 @@ If the TDDs are less than the maximum, the pond depth remains
 the same.
 """
 
-def check_Ponds(self, element, time, growth_time_required):
+def check_Ponds(self, element, time):#, growth_time_required):
 
     # --------------------------------------
     # Check to see if the Total Degree Days
@@ -27,7 +27,7 @@ def check_Ponds(self, element, time, growth_time_required):
     # the pond count.
     # --------------------------------------
 #    if element == 0:
-    if self.met_distribution.lower() == 'point':
+    if self.Met['met_distribution'].lower() == 'point':
         if time == 0:
             self.TDD_max = self.degree_days[0,1]
         else:
@@ -55,14 +55,15 @@ def check_Ponds(self, element, time, growth_time_required):
         # Check to see if the Total Degree Days
         # are at the current maximum.
         # --------------------------------------
-        if self.met_distribution.lower() == 'point':
+        if self.Met['met_distribution'].lower() == 'point':
             if self.degree_days[time,1] == self.TDD_max:
                 # Increase the depth of the pond by sqrt[pond_count]
-                self.Pond_Depth[element] = self.Pond_Depth[element] + np.sqrt(self.pond_count)/10.
+                self.Pond_Depth[element] = self.Pond_Depth[element] + np.sqrt(self.pond_count)/ \
+                  self.LakePond['pond_depth_control']
                 # Check if pond depth >= ice thickness
                 if self.Pond_Depth[element] >= self.ice_thickness[element]:
                     # Check if Pond Growth has been sustained over time
-                    if self.pond_growth[element] >= growth_time_required:
+                    if self.pond_growth[element] >= self.LakePond['growth_time_required']:
                         # Transition Ponds -> Lakes
                         self.ATTM_Lakes[element] = self.ATTM_Lakes[element] + self.ATTM_Ponds[element]
                         # Transition Ponds -> 0.0
@@ -75,7 +76,7 @@ def check_Ponds(self, element, time, growth_time_required):
                 # Pond depth remains the same.
                 # Check if pond depth >= ice thickness
                 if self.Pond_Depth[element] >= self.ice_thickness[element]:
-                    if self.pond_growth[element] >= growth_time_required:
+                    if self.pond_growth[element] >= self.LakePond['growth_time_required']:
                         # Transition Ponds -> Lakes
                         self.ATTM_Lakes[element] = self.ATTM_Lakes[element] + self.ATTM_Ponds[element]
                         # Transition Ponds -> 0.0
@@ -90,11 +91,12 @@ def check_Ponds(self, element, time, growth_time_required):
         else:
             if self.TDD[time, element] == self.TDD_max[element]:
                 # Increase the depth of the pond by sqrt[pond_count]
-                self.Pond_Depth[element] = self.Pond_Depth[element] + np.sqrt(self.pond_count)/10.
+                self.Pond_Depth[element] = self.Pond_Depth[element] + np.sqrt(self.pond_count)/ \
+                  self.LakePond['pond_depth_control']
                 # Check if pond depth >= ice thickness
                 if self.Pond_Depth[element] >= self.ice_thickness[element]:
                     # Check if Pond Growth has been sustained over time
-                    if self.pond_growth[element] >= growth_time_required:
+                    if self.pond_growth[element] >= self.LakePond['growth_time_required']:
                         # Transition Ponds -> Lakes
                         self.ATTM_Lakes[element] = self.ATTM_Lakes[element] + self.ATTM_Ponds[element]
                         # Transition Ponds -> 0.0
@@ -107,7 +109,7 @@ def check_Ponds(self, element, time, growth_time_required):
                 # Pond depth remains the same.
                 # Check if pond depth >= ice thickness
                 if self.Pond_Depth[element] >= self.ice_thickness[element]:
-                    if self.pond_growth[element] >= growth_time_required:
+                    if self.pond_growth[element] >= self.LakePond['growth_time_required']:
                         # Transition Ponds -> Lakes
                         self.ATTM_Lakes[element] = self.ATTM_Lakes[element] + self.ATTM_Ponds[element]
                         # Transition Ponds -> 0.0

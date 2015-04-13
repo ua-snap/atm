@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def check_climate_event(self, climate_blocks, climate_event_probability):
+def check_climate_event(self):#, climate_blocks, climate_event_probability):
     """
     The purpose of this module is to check if a major/significant
     climatic event took place over the year. If a climatic event
@@ -56,10 +56,11 @@ def check_climate_event(self, climate_blocks, climate_event_probability):
     """
 
     # Step 0: Set the size of the climate blocks
-    if climate_blocks == 'RANDOM':
-        climate_blocks = np.random.random_integers(5,20)
+    if self.Met['climate_blocks'].lower() == 'random':
+        climate_blocks = \
+          random.randint(self.Met['climate_block_lower_bound'], self.Met['climate_block_upper_bound'])           
     else:
-        climate_blocks = climate_blocks
+        climate_blocks = int(self.Met['climate_blocks'])
         
     # Step 1: Reshape Lakes and Ponds to 'regular model domain'
     self.ATTM_Lakes = np.reshape(self.ATTM_Lakes, [self.ATTM_nrows, self.ATTM_ncols])
@@ -81,7 +82,7 @@ def check_climate_event(self, climate_blocks, climate_event_probability):
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             climate_event = random.uniform(0.0, 1.0)
             
-            if climate_event <= climate_event_probability: # A climate event happens
+            if climate_event <= self.Met['climate_event_probability']:  # A climate event happens
                 print 'Climate Event in Block: ', climate_count
                 print '... Checking for Lakes and Ponds...'
 
@@ -119,16 +120,16 @@ def check_climate_event(self, climate_blocks, climate_event_probability):
                         pond_drain_rate = 0.0
                         pond_partial_rate = 0.0
                     if Ponds[i] > 0.0 and Ponds[i] <= 0.01:
-                        pond_drain_rate = 0.085
+                        pond_drain_rate = self.Met['pond_drain_rate_<0.01']
                         pond_partial_rate = random.uniform(0., pond_drain_rate)
                     if Ponds[i] > 0.01 and Ponds[i] <= 0.1 :
-                        pond_drain_rate = 0.057
+                        pond_drain_rate = self.Met['pond_drain_rate_0.01<0.1']
                         pond_partial_rate = random.uniform(0., pond_drain_rate)
                     if Ponds[i] > 0.1 and Ponds[i] <= 0.4 :
-                        pond_drain_rate = 0.2
+                        pond_drain_rate = self.Met['pond_drain_rate_0.1<0.4']
                         pond_partial_rate = random.uniform(0., pond_drain_rate)
                     if Ponds[i] > 0.4 and Ponds[i] < 1.0 :
-                        pond_drain_rate = 0.2
+                        pond_drain_rate = self.Met['pond_drain_rate_0.4<1.0']
                         pond_partial_rate = random.uniform(0., pond_drain_rate)
                     if Ponds[i] == 1.0:
                         pond_drain_rate = 0.0
@@ -140,16 +141,16 @@ def check_climate_event(self, climate_blocks, climate_event_probability):
                         lake_drain_rate = 0.0
                         lake_partial_rate = 0.0
                     if Lakes[i] > 0.0 and Lakes[i] <= 0.01:
-                        lake_drain_rate = 0.085
+                        lake_drain_rate = self.Met['lake_drain_rate_<0.01']
                         lake_partial_rate = random.uniform(0., lake_drain_rate)
                     if Lakes[i] > 0.01 and Lakes[i] <= 0.1 :
-                        lake_drain_rate = 0.057
+                        lake_drain_rate = self.Met['lake_drain_rate_0.01<0.1']
                         lake_partial_rate = random.uniform(0., lake_drain_rate)
                     if Lakes[i] > 0.1 and Lakes[i] <= 0.4 :
-                        lake_drain_rate = 0.2
+                        lake_drain_rate = self.Met['lake_drain_rate_0.1<0.4']
                         lake_partial_rate = random.uniform(0., lake_drain_rate)
                     if Lakes[i] > 0.4 and Lakes[i] < 1.0 :
-                        lake_drain_rate = 0.2
+                        lake_drain_rate = self.Met['lake_drain_rate_0.4<1.0']
                         lake_partial_rate = random.uniform(0., lake_drain_rate)
                     if Lakes[i] == 1.0:
                         lake_drain_rate = 0.0

@@ -1,4 +1,4 @@
-def read_degree_days(self, FIGURE):
+def read_degree_days(self):#, FIGURE):
 
     """
     The purpose of this module is to read the Thawing Degree
@@ -40,7 +40,7 @@ def read_degree_days(self, FIGURE):
 
     """ NOTE: The TDD_file is located in the Input/Degree_Days/ directory """
 
-    num_lines = sum(1 for line in open(self.TDD_file))
+    num_lines = sum(1 for line in open(self.Met['TDD_file']))
 
     # Set up TDD array
     self.TDD = np.zeros([num_lines, self.ATTM_nrows * self.ATTM_ncols])
@@ -50,7 +50,7 @@ def read_degree_days(self, FIGURE):
     year = np.arange(min(self.Year), max(self.Year), dtype = np.int16)
     
     # Read TDD Data
-    with open(self.TDD_file) as f:
+    with open(self.Met['TDD_file']) as f:
         for line in f:
             line = line.rstrip()          # removes \n at line end
 
@@ -60,17 +60,17 @@ def read_degree_days(self, FIGURE):
             self.TDD[count,:] = data.flatten()
 
             # Create plots if required
-            if FIGURE == 'TRUE':
+            if self.Met['Degree_Day_Output'].lower() == 'yes':
                 TDD_plot = np.reshape(self.TDD[count,:], [int(self.ATTM_nrows), int(self.ATTM_ncols)])
                 year_plot = year[count]
                 #--------------------------------------------------------
                 # Thawing Degree Days
                 #--------------------------------------------------------
                 fig = pl.figure()
-                pl.imshow(TDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = 0.0, vmax = 1000.0)
+                pl.imshow(TDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = 0.0, vmax = 1250.0)
                 pl.title('Thawing Degree-Days - '+str(year_plot))
                 pl.colorbar(extend = 'neither', shrink = 0.92)
-                pl.savefig(dd_out_dir+'Thawing_Degree_Days_'+str(year_plot)+'.jpg', format = 'jpg')
+                pl.savefig(dd_out_dir+self.Met['TDD_Output']+str('_')+str(year_plot)+'.jpg', format = 'jpg')
                 pl.close()
 
             # Moving to the next line
@@ -93,7 +93,7 @@ def read_degree_days(self, FIGURE):
     year = np.arange(min(self.Year), max(self.Year), dtype = np.int16)
     
     # Read FDD Data
-    with open(self.FDD_file) as f:
+    with open(self.Met['FDD_file']) as f:
         for line in f:
             line = line.rstrip()          # removes \n at line end
 
@@ -103,17 +103,17 @@ def read_degree_days(self, FIGURE):
             self.FDD[count,:] = data.flatten()
 
             # Create Plots if required 
-            if FIGURE == 'TRUE':
+            if self.Met['Degree_Day_Output'].lower() == 'yes':
                 FDD_plot = np.reshape(self.FDD[count,:], [int(self.ATTM_nrows), int(self.ATTM_ncols)])
                 year_plot = year[count]
                 #--------------------------------------------------------
                 # Thawing Degree Days
                 #--------------------------------------------------------
                 fig = pl.figure()
-                pl.imshow(FDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = -6000.0, vmax = -3500.0)
+                pl.imshow(FDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = -6000.0, vmax = -2000.0)
                 pl.title('Freezing Degree-Days - '+str(year_plot))
                 pl.colorbar(extend = 'neither', shrink = 0.92)
-                pl.savefig(dd_out_dir+'Freezing_Degree_Days_'+str(year_plot)+'.jpg', format = 'jpg')
+                pl.savefig(dd_out_dir+self.Met['FDD_Output']+str('_')+str(year_plot)+'.jpg', format = 'jpg')
                 pl.close()
 
             # Moving to the next line

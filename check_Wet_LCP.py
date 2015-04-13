@@ -5,54 +5,78 @@ from math import exp as exp
 
 def check_Wet_LCP(self, element, time):
     
-    # Define WET_LCP curve constants:
-    # ! For 'Above' Drainage threshold
-    A1_above = -1.186e-1
-    A2_above = 1.01
-    x0_above = 4.856e-1
-    dx_above = 1.398e-1
-    # ! for 'Below' Drainage threshold
-    A1_below = 3.454e-2
-    A2_below = 1.01
-    x0_below = 1.04
-    dx_below = 1.617e-1
     # ! Position on the POI curve
     if self.Wet_LCP_PL[element] == 0:
         x = -1.0
     else:
         x        = (self.ALD[element] / self.Wet_LCP_PL[element]) - 1.0
+            
     # Maximum rate of terrain transition
-    max_rate_terrain_transition = 0.00056
+    max_rate_terrain_transition = self.WetLCP['max_terrain_transition']
     
     # Rate of terrain transition as f(ice)
-    if self.ice[element] == 'poor'    : ice_slope = 0.05
-    if self.ice[element] == 'pore'    : ice_slope = 0.5
-    if self.ice[element] == 'wedge'   : ice_slope = 1.25
-    if self.ice[element] == 'massive' : ice_slope = 3.33
+    if self.ice[element] == 'poor'    : ice_slope = self.WetLCP['ice_slope_poor']
+    if self.ice[element] == 'pore'    : ice_slope = self.WetLCP['ice_slope_pore']
+    if self.ice[element] == 'wedge'   : ice_slope = self.WetLCP['ice_slope_wedge']
+    if self.ice[element] == 'massive' : ice_slope = self.WetLCP['ice_slope_massive']
     
     
     # check if Wetland Non-polygonal ground is present in the element
     if self.ATTM_Wet_LCP[element] > 0.0:
-
         # Active Layer > Protective Layer
         if self.ALD[element] >= self.Wet_LCP_PL[element]:
+            #=============================================================
             # Determine the Probability of Initiation (POI) for time-step
-
-            if self.drainage_efficiency[element] == 'above':
-                A1 = A1_above
-                A2 = A2_above
-                x0 = x0_above
-                dx = dx_above
-            else:
-                # Drainage efficiency = 'below'
-                A1 = A1_below
-                A2 = A2_below
-                x0 = x0_below
-                dx = dx_below
+            #=============================================================
+            if self.WetLCP['POI_Function'].lower() == 'sigmoid':
+                if self.drainage_efficiency[element] == 'above':
+                    A1 = self.WetLCP['A1_above']
+                    A2 = self.WetLCP['A2_above']
+                    x0 = self.WetLCP['x0_above']
+                    dx = self.WetLCP['dx_above']
+                else:
+                    # Drainage efficiency = 'below'
+                    A1 = self.WetLCP['A1_below']
+                    A2 = self.WetLCP['A2_below']
+                    x0 = self.WetLCP['x0_below']
+                    dx = self.WetLCP['dx_below']
                 
-            # Probability of Initiation (POI) at current time
-            POI = A2 + (A1 - A2)/(1.+exp((x - x0)/dx))
-            # Cumulative POI
+                # Probability of Initiation (POI) at current time
+                POI = A2 + (A1 - A2)/(1.+exp((x - x0)/dx))
+            elif self.WetLCP['POI_Function'].lower() == 'linear':
+                if self.drainage_efficiency[element] == 'above':
+                    a = self.WetLCP['a_above']
+                    b = self.WetLCP['b_above']
+                else:
+                    a = self.WetLCP['a_below']
+                    b = self.WetLCP['b_below']
+                # Probability of Initation (POI) at current time
+                POI = a + (b * x)
+            elif self.WetLCP['POI_Function'].lower() == 'sigmoid2':
+                if self.drainage_efficiency[element] == 'above':
+                    K = self.WetLCP['K_above']
+                    C = self.WetLCP['C_above']
+                    A = self.WetLCP['A_above']
+                    B = self.WetLCP['B_above']
+                else:
+                    K = self.WetLCP['K_below']
+                    C = self.WetLCP['C_below']
+                    A = self.WetLCP['A_below']
+                    B = self.WetLCP['B_below']
+                # Probability of Initiation (POI) at current time
+                POI = K / (C + (A * x**B))
+            elif self.WetLCP['POI_Function'].lower() == 'hill':
+                if self.drainage_efficiency[element] == 'above':
+                    B = self.WetLCP['HillB_above']
+                    N = self.WetLCP['HillN_above']
+                else:
+                    B = self.WetLCP['HillB_below']
+                    N = self.WetLCP['HillN_below']
+                # Probability of Intiation (POI) at current time
+                POI = (B * (x**N))/(1. + (x**N))
+            #==============================    
+            # Calculate the Cumulative POI
+            #==============================
             if time == 0:
                 self.Wet_LCP_POI[element, time] = POI
             else:
@@ -65,9 +89,11 @@ def check_Wet_LCP(self, element, time):
             # Adjust the Protective layer depth
             # ! Note: Assuming porosity of soil = 0.5. 
             self.Wet_LCP_PL[element] = self.Wet_LCP_PL[element] + ((self.ALD[element] - \
-                                                                   self.Wet_LCP_PL[element])*0.5)
-
+                                                                   self.Wet_LCP_PL[element])* \
+                                                                   self.WetLCP['porosity'])
+            #========================================================================
             # Determine rate of terrain transition from Wet_LCP -> Wet_FCP & Wet_CLC
+            #========================================================================
             rate_of_transition = (self.Wet_LCP_POI[element, time] * ice_slope) * max_rate_terrain_transition
             # error check
             if rate_of_transition > max_rate_terrain_transition: rate_of_transition = max_rate_terrain_transition

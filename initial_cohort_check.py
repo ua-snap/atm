@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def initial_cohort_check(self, PLOT, FIGURE):
+def initial_cohort_check(self):
     """
     The purpose of this module is to ensure that all fractional land-surface cohorts, in each element,
     sums to one.  There are errors introducted in the the interpolation process
@@ -136,8 +136,7 @@ def initial_cohort_check(self, PLOT, FIGURE):
     print '      done.'
     print ' '
 
-    if PLOT == 'TRUE' or FIGURE == 'TRUE':
-        
+    if self.initialize['Normalized_Cohort_Distribution_Figure'].lower() == 'yes':    
         cohort_check = np.reshape(self.ATTM_Total_Fractional_Area,  [int(self.ATTM_nrows), int(self.ATTM_ncols)])
 
         # Files for plotting & reference #
@@ -161,105 +160,95 @@ def initial_cohort_check(self, PLOT, FIGURE):
         # -----------------------------------------------------------------------------
         # Output files and figures
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_NPG_plot, interpolation='nearest', cmap='bone')
-        pl.title('Wetland Non-polygonal Ground (meadow) Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['WetNPG_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_NPG_plot, interpolation='nearest', cmap='bone')
+            pl.title('Wetland Non-polygonal Ground (meadow) Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Wet_NPG/Wet_NPG_Initial_Fraction.png', format = 'png')
             self.ATTM_Wet_NPG.tofile('./Wet_NPG/Wet_NPG_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_LCP_plot, interpolation='nearest', cmap='bone')
-        pl.title('Wetland Low Center Polygon Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['WetLCP_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_LCP_plot, interpolation='nearest', cmap='bone')
+            pl.title('Wetland Low Center Polygon Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Wet_LCP/Wet_LCP_Initial_Fraction.png', format = 'png')
             self.ATTM_Wet_LCP.tofile('./Wet_LCP/Wet_LCP_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_CLC_plot, interpolation='nearest', cmap='bone')
-        pl.title('Wetland Coalescent Low Center Polygon Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['WetCLC_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_CLC_plot, interpolation='nearest', cmap='bone')
+            pl.title('Wetland Coalescent Low Center Polygon Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Wet_CLC/Wet_CLC_Initial_Fraction.png', format = 'png')
             self.ATTM_Wet_CLC.tofile('./Wet_CLC/Wet_CLC_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_FCP_plot, interpolation='nearest', cmap='bone')
-        pl.title('Wetland Flat Center Polygon Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['WetFCP_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_FCP_plot, interpolation='nearest', cmap='bone')
+            pl.title('Wetland Flat Center Polygon Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Wet_FCP/Wet_FCP_Initial_Fraction.png', format = 'png')
             self.ATTM_Wet_FCP.tofile('./Wet_FCP/Wet_FCP_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
-        # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Wet_HCP_plot, interpolation='nearest', cmap='bone')
-        pl.title('Wetland High Center Polygon Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+            pl.close()
+         # -----------------------------------------------------------------------------
+        if self.initialize['WetHCP_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Wet_HCP_plot, interpolation='nearest', cmap='bone')
+            pl.title('Wetland High Center Polygon Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Wet_HCP/Wet_HCP_Initial_Fraction.png', format = 'png')
             self.ATTM_Wet_HCP.tofile('./Wet_HCP/Wet_HCP_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Rivers_plot, interpolation='nearest', cmap='bone')
-        pl.title('Rivers Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['Rivers_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Rivers_plot, interpolation='nearest', cmap='bone')
+            pl.title('Rivers Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Other_Cohorts/Rivers_Initial_Fraction.png', format = 'png')
             self.ATTM_Rivers.tofile('./Other_Cohorts/Rivers_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Ponds_plot, interpolation='nearest', cmap='bone')
-        pl.title('Ponds (shallow lake) Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['Ponds_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Ponds_plot, interpolation='nearest', cmap='bone')
+            pl.title('Ponds (shallow lake) Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Ponds/Ponds_Initial_Fraction.png', format = 'png')
             self.ATTM_Ponds.tofile('./Ponds/Ponds_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Lakes_plot, interpolation='nearest', cmap='bone')
-        pl.title('Lakes Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['Lakes_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Lakes_plot, interpolation='nearest', cmap='bone')
+            pl.title('Lakes Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Lakes/Lakes_Initial_Fraction.png', format = 'png')
             self.ATTM_Lakes.tofile('./Lakes/Lakes_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Urban_plot, interpolation='nearest', cmap='bone')
-        pl.title('Urban Initial Fractional Area')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['Urban_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Urban_plot, interpolation='nearest', cmap='bone')
+            pl.title('Urban Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./Other_Cohorts/Urban_Initial_Fraction.png', format = 'png')
             ATTM_Urban_plot.tofile('./Other_Cohorts/Urban_fractional_cohorts.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
-        fig = pl.figure()
-        pl.imshow(ATTM_Total_plot, interpolation='nearest', cmap='bone')
-        pl.title('Total of All Initial Fractional Areas')
-        pl.colorbar( extend = 'max', shrink = 0.92)
-        if FIGURE == 'TRUE':
+        if self.initialize['Total_Cohorts_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Total_plot, interpolation='nearest', cmap='bone')
+            pl.title('Total of All Initial Fractional Areas')
+            pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./All_Cohorts/Total_Cohort_Initial_Fraction.png', format = 'png')
             self.ATTM_Total_Fractional_Area.tofile('./All_Cohorts/Initial_Cohort_Fractional_Area.bin')
-        if PLOT == 'TRUE':
-            pl.show()
+            pl.close()
         # -----------------------------------------------------------------------------
         # Return to Run Directory
         #----------------------------------
