@@ -7,9 +7,9 @@ def read_control(self):
     The name of the control file is specified at the command line as
     the first option following the program name. See example below.
     ------------------------------
-    python ATTM.py Control
+    python ATM.py Control
     ------------------------------
-    In this case, the file named "Control" is the control file, located in 
+    In this case, the file named 'Control' is the control file, located in 
     the same directory as this file.
 
     ##################################
@@ -26,13 +26,25 @@ def read_control(self):
                 (key, val) = line.split()
                 self.control[(key)] = val
 
-    """ Start Initialization Process """
-    self.Initialize_Control = self.control['Initialize_Control']
-    
-    """ Input and Output Directories """
+    """ Run, Input and Output Directories """
     self.Run_directory      = self.control['Run_dir']
     self.Input_directory    = self.control['Input_dir']
     self.Output_directory   = self.control['Output_dir']
+    
+    """ Simulation area """
+    self.Simulation_area    = self.control['Simulation_area']
+    
+    """ Start Initialization Process """
+    if self.Simulation_area.lower() == 'barrow':
+        self.Initialize_Control = self.control['Run_dir']+self.Input_directory+\
+                                  '/Barrow/'+self.control['Initialize_Control']
+        self.Terrestrial_Control = self.control['Run_dir']+self.Input_directory+\
+                                   '/Barrow/'+self.control['Terrestrial_Control']
+    elif self.Simulation_area.lower() == 'tanana':
+        self.Initialize_Control = self.control['Run_dir']+self.Input_directory+\
+                                  '/Tanana/'+self.control['Initialize_Control']
+        self.Terrestrial_Control = self.control['Run_dir']+self.Input_directory+\
+                                   '/Tanana/'+self.control['Terrestrial_Control']
     
     """ Flag for Geotiff Layer Input & Output """
     self.Read_Geotiff     = self.control['Read_Geotiff']
@@ -57,7 +69,7 @@ def read_control(self):
     self.test_code_duration      = int(self.control['Test_code_duration'])	
 
     """ File containing Terrestrial Cohorts Variables & Parameters """
-    self.Terrestrial_Control     = self.control['Terrestrial_Control']
+#    self.Terrestrial_Control     = self.control['Terrestrial_Control']
     self.Wet_NPG_Control         = self.control['Wet_NPG_Control']
     self.Wet_LCP_Control         = self.control['Wet_LCP_Control']
     self.Wet_CLC_Control         = self.control['Wet_CLC_Control']

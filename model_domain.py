@@ -11,10 +11,16 @@ def model_domain(self):
     print '    Initialize model domain.'
     
     print '      In the model domain - checking dimensions'
-    if (np.size(self.LCP) == np.size(self.Rivers) == np.size(self.Ponds) == \
-        np.size(self.Lakes) == np.size(self.FCP) == np.size(self.Urban) == \
-        np.size(self.NPG) == np.size(self.CLC) == np.size(self.HCP)):
-        print '      All data arrays have the same dimensions'
+    if self.Simulation_area.lower() == 'barrow':
+        if (np.size(self.LCP) == np.size(self.Rivers) == np.size(self.Ponds) == \
+            np.size(self.Lakes) == np.size(self.FCP) == np.size(self.Urban) == \
+            np.size(self.NPG) == np.size(self.CLC) == np.size(self.HCP)):
+            print '      All data arrays have the same dimensions'
+    elif self.Simulation_area.lower() == 'tanana':
+         if (np.size(self.TF_OB) == np.size(self.TF_OF) == np.size(self.TF_Con_PP) == \
+            np.size(self.TF_Dec_PP) == np.size(self.TF_TL) == np.size(self.TF_YB) == \
+            np.size(self.TF_YF)):
+            print '    All data arrays have the same dimensions'
     else:
         print '      Initial data array sizes are not all equal.'
         exit()

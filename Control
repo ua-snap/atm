@@ -3,8 +3,12 @@
 #================================================================
 # INFORMATION NEEDED TO SET UP THE SIMULATION
 #================================================================
+# Simulation Area (which code to run): .
+#       [barrow, arctic_coast, tanana, yukon, AIEM, ngee]
+Simulation_area					Barrow
+#----------------------------------------------------------------
 # Specify location of computer code on local computer
-Run_dir		/home/bob/Data/bob/Dropbox/SNAP/CSC/AIEM/Thermokarst/ATTM_Code/
+Run_dir		/home/bob/Data/bob/Dropbox/SNAP/CSC/AIEM/Thermokarst/ATM_Code/
 #----------------------------------------------------------------
 # Data Input and Output Directories
 Input_dir				Input
@@ -12,9 +16,18 @@ Output_dir				Output
 #----------------------------------------------------------------
 # Name of "Notes Files" containing additional information
 #   -- "Blank" is an empty file.
-Notes_file				2015_April_13
+Notes_file				2015_August_24_ForCathy
 #----------------------------------------------------------------
 # Information needed to initialize the model
+# **********************************************
+# *    Note on prefixes:                       *
+# *        00_ : Barrow test area  	       *
+# *        01_ : Arctic coast simulation       *
+# *        02_ : Tanana River test area	       *
+# *        03_ : Yukon Flats test area	       *
+# *	   04_ : AIEM model domain	       *
+# *        05_ : NGEE model domain	       *
+#***********************************************
 Initialize_Control			00_Initialize_Control
 #----------------------------------------------------------------
 # Model resolution
@@ -26,7 +39,7 @@ Read_Geotiff				Yes
 Write_Geotiff				Yes
 #----------------------------------------------------------------
 # TEST CODE CONTROL (short simulations for testing purposes)
-Test_code               		No
+Test_code               		no
 Test_code_duration			5
 #================================================================
 # INFORMATION NEEDED TO RUN SIMULATION
@@ -35,7 +48,9 @@ Test_code_duration			5
 Met_Control				00_Met_Control
 #----------------------------------------------------------------
 # File Names Containing Terrestrial Cohort Parameters & Variables 
-#----------------------------------------------------------------
+#    Note that Terrestial Control location should be located
+#    in the ../Input/Simulation (Barrow,Tanana, etc) directory
+#------------------------------------------------------------------------
 Terrestrial_Control			00_Terrestrial_Control
 Wet_NPG_Control				00_Wet_NPG_Control
 Wet_LCP_Control				00_Wet_LCP_Control
@@ -49,11 +64,11 @@ Lake_Pond_Control			00_Lake_Pond_Control
 # INFORMATION NEEDED FOR RESULTS OUTPUT AND ARCHIVING 
 #================================================================
 # Show Results Summary on Computer Screen
-Results_onscreen			Yes
+Results_onscreen			No
 #----------------------------------------------------------------
 # Is the simulation archived (yes, no)? If 'yes', archive name.
 Archive_simulation			Yes
-Simulation_name				Historical_1
+Simulation_name				Historical_1901-2006
 #----------------------------------------------------------------
 # File Name Containing Archiving Information
 #---------------------------------------------------------------

@@ -1,0 +1,67 @@
+#============================================================
+# Distribution of Lake depth (uniform, random)
+Lake_Distribution				Random
+#------------------------------------------------------------
+# Value for uniform distribution
+Uniform_Lake_Depth				3.5
+#------------------------------------------------------------
+# Boundaries for random distribution
+Lower_Lake_Depth				2.2
+Upper_Lake_Depth				5.0
+#============================================================
+# Distribution of Pond depth (uniform, random)
+Pond_Distribution				Random
+#------------------------------------------------------------
+# Value for uniform distribution
+Uniform_Pond_Depth				1.5
+#------------------------------------------------------------
+# Boundaries for random distribution
+Lower_Pond_Depth				1.25
+Upper_Pond_Depth				1.7
+#============================================================
+# Set the Lake & Pond Expansion Constant
+Lake_Expansion					0.0001
+Pond_Expansion					0.0001
+#============================================================
+# Set Pond Infilling Constant
+Pond_Infill_Constant				0.005
+#============================================================
+# Set the Lake & Pond Ice Thickness alpha Distribution
+#    (uniform, random)
+ice_thickness_distribution			Random
+#------------------------------------------------------------
+# Value for uniform distribution
+ice_thickness_uniform_alpha			2.4
+#------------------------------------------------------------
+# Boundaries for random distribution
+Lower_ice_thickness_alpha			2.31
+Upper_ice_thickness_alpha			2.55
+#============================================================
+# Number of consequitive years a pond must grow (in depth)
+#   before it is allowed to transition to a lake
+#------------------------------------------------------------
+growth_time_required				1
+#============================================================
+# Change in Pond and Lake Depth Functions
+#============================================================
+# Approximate Square Root of Time Function
+#   Depth_Change = sqrt(time)/[pond/lake]_depth_control
+#------------------------------------------------------------
+lake_depth_control 				100
+pond_depth_control				10
+#============================================================
+# Output Control for Lake & Pond Depth
+Lake_Depth_Figure				No
+Pond_Depth_Figure				No
+#============================================================
+# Output Results of Pond/Lake Distribution
+# 	Figures with "yes" flag result in both *.bin and
+#	*.jpg files. If Movie is flagged with 'yes', the
+# 	figures  flag must also be flagged 'yes'.
+#------------------------------------------------------------
+Pond_Figures					Yes
+Pond_Movie					Yes
+#------------------------------------------------------------
+Lake_Figures					Yes
+Lake_Movie					Yes
+#============================================================

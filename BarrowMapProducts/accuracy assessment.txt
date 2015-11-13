@@ -1,0 +1,21 @@
+		Reference data		
+	Land Cover Type
+	                    Urban	DS	HC	FC	LC	CLC	MDW	Pond	Lake	River	Total	User accuracy (%)
+Classification	Urban    	3										3	1.00
+	Drainage Slope		        15	1	1							17	0.88
+	High Center		         2	43	11	2						58	0.74
+	Flat Center		         4	15	28	5						52	0.54
+	Low Center		         3	7	17	92	4	1		1		125	0.74
+	Coalescent LowCenter		        				17	2		1	20	0.85
+	Meadow			                1	1	5	1	20	1	1		30	0.67
+	Pond		        	        					8	1		9	0.89
+	Lake	         		                1		1			41		43	0.95
+	River	                									3	3	1.00
+	Total	                3	24	67	59	104	23	23	9	45	3	360 
+	Producer accuracy (%)	1.0	0.63	0.64	0.47	0.88	0.74	0.87	0.89	0.91	1.0		
+	Overall accuracy (%) 										0.75
+	Kappa 												0.694
+	Weighted Kappa	 	 	 	 	 	 	 	 	 	 	0.836
+	
+
+Trough (High res. classification) producer and user accuracy was 96 and 73%, n=142; Kappa: 95% CI= 0.64-0.75, strength of agreement considered 'good', weighted Kappa: strength of agreement considered 'very good'

@@ -1,0 +1,79 @@
+#==============================================================
+# Form of Probability of Initiation (Sigmoid, Sigmoid2, linear, 
+#                                    Hill) 
+#----------------------------------------------------------
+POI_Function			sigmoid2
+# ============================================================
+# The Sigmoid Function
+# POI = A2 + (A1 - A2) / (1. + exp((x - x0) / dx))
+#---------------------------------------------------------
+# Parameter values for cohorts above the drainage threshold
+A1_above 		-1.186e-1
+A2_above		1.01
+x0_above		4.856e-1
+dx_above		1.398e-1
+# Parameter values for cohorts below the drainage threshold
+A1_below		3.454e-2
+A2_below		1.01
+x0_below		1.04
+dx_below		1.617e-1
+#============================================================
+# The Sigmoid2 Function
+# POI = K / (C + (A*x**B))
+#------------------------------------------------------------
+# Parameter values for cohorts ABOVE the drainage threshold
+K_above			10.
+C_above			10.
+A_above			0.5
+B_above			-2.0
+# Parameter values for cohorts BELOW the drainage threshold
+K_below			10.
+C_below			10.
+A_below			3.0
+B_below			-3.0
+#============================================================
+# The linear function
+# POI = a + (b * x )
+#----------------------------------------------------------
+# Parameter values for cohorts above the drainage threshold
+a_above			0.0
+b_above			0.6
+# Parameter values for cohorts below the drainage threshold
+a_below			0.0
+b_below			0.4
+#===========================================================
+# The Hill Function
+# POI = (B*(x^n))/(1+(x^n))
+#----------------------------------------------------------
+# Parameter values for cohorts above the drainage threshold
+HillB_above			1.0
+HillN_above			0.25
+# Parameter values for cohorts below the drainage threshold
+HillB_below			1.0
+HillN_below			0.25
+#===========================================================
+# Maximum rate of terrain transition
+#-----------------------------------------------------------
+max_terrain_transition  0.25
+#===========================================================
+# Rate transitions as a function of ice content
+#-----------------------------------------------------------
+ice_slope_poor		0.05
+ice_slope_pore		0.25
+ice_slope_wedge		0.5
+ice_slope_massive	1.0
+#===========================================================
+# Soil Properties
+#      Note: Porosity must be between 0 - 1.0
+#-----------------------------------------------------------
+porosity 		0.5
+#===========================================================
+# Output results
+# --------------------
+# Note: In order for an animation to be output, Figures 
+#       must be set to 'Yes' (results in *.bin and *.jpg
+#	files).
+#-----------------------------------------------------------
+Figures			Yes
+Movie			Yes
+#-----------------------------------------------------------

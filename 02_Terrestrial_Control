@@ -1,0 +1,40 @@
+#============================================================
+# Distribution of Ground Ice (poor, pore, wedge, massive, random)
+#------------------------------------------------------------
+Ice_Distribution				WEDGE
+#------------------------------------------------------------
+Ice_Distribution_Figure				Yes
+#============================================================
+# Drainage Efficiency  (above, below, random)
+#------------------------------------------------------------
+Drainage_Efficiency_Distribution		Random
+Drainage_Efficiency_Random_Value		0.85
+#------------------------------------------------------------
+Drainage_Efficiency_Figure			Yes
+#============================================================
+# Initial Active Layer Depth  (random)
+ALD_Distribution				random
+ALD_Distribution_Lower_Bound			0.5
+ALD_Distribution_Upper_Bound			1.6
+#------------------------------------------------------------
+ALD_Distribution_Output				Yes
+ALD_Factor_Output				No
+#============================================================
+# Set Protective Layer Factors
+#   Note: The initial protective layer is calculated
+#   as the (Initial Active Layer * Protective Layer Factor)
+#------------------------------------------------------------
+TF_OB_PLF 		0.8
+TF_YB_PLF 		1.0
+TF_OF_PLF 		1.0
+TF_YF_PLF 		1.15
+TF_Con_PP_PLF 		1.25
+TF_Dec_PP_PLF 		0.8
+TF_TL_PLF 		1.0
+#------------------------------------------------------------
+Protective_Layer_Factor_Output			Yes
+#============================================================
+# Output Control for Dominant Cohort Figure / Movie
+Figure						Yes
+Movie						Yes
+#============================================================		

@@ -1,0 +1,56 @@
+#============================================================
+# Meteorologic data distribution (point, spatial)
+#------------------------------------------------------------
+met_distribution        			spatial
+#------------------------------------------------------------
+# Names of files that contain meterological data information
+#    -- excel (xls) file for point data, geotif for distributed
+#       data
+# (Barrow_2006_2100.xls, BarrowAT_1901-2006, 
+#  BarrowAT_2001-2100_cccma, BarrowAT_2001-2100_5modelAvg,
+#  BarrowAT_2001-2001_echam5)
+#------------------------------------------------------------
+met_file_point			BarrowMET_2006_2100.xls
+met_file_distributed		BarrowAT_1901-2006
+#============================================================
+# Method to input Degree-Days. Can be calculated from geotiff (slow) or read from
+# binary files if previously calculated
+# ['calc' or 'read']
+#------------------------------------------------------------
+degree_day_method				read
+#------------------------------------------------------------
+#If degree_day method is 'read', file names with degree day information
+#  (00_FDD/TDD_historical_1901-2006, 00_FDD/TDD_CCCMA_2001-2100,
+#   00_FDD/TDD_ECHAM5_2001-2100)
+#------------------------------------------------------------
+TDD_file				00_TDD_historical_1901-2006
+FDD_file                		00_FDD_historical_1901-2006
+#============================================================
+# Information for Major Climatic Events
+#------------------------------------------------------------
+# Climate blocks - the size (km2) of major climatic events
+#                  (Random or numerical value)
+climate_blocks			random
+climate_block_lower_bound	5
+climate_block_upper_bound	25
+climate_event_probability	0.005
+#============================================================
+# Pond & Lake Drain Rate following climatic event
+# -----------------------------------------------------------
+pond_drain_rate_<0.01		0.0005
+pond_drain_rate_0.01<0.1	0.0005
+pond_drain_rate_0.1<0.4		0.0005
+pond_drain_rate_0.4<1.0		0.0005
+#------------------------------------------------------------
+lake_drain_rate_<0.01		0.0005
+lake_drain_rate_0.01<0.1	0.0010
+lake_drain_rate_0.1<0.4		0.0017
+lake_drain_rate_0.4<1.0		0.0025
+#============================================================	
+# Output Degree Day Files
+Degree_Day_Output	No
+#------------------------------------------------------------
+# Name of Degree Day Output Files if calculated
+TDD_Output			TDD_Historical_1901-2006
+FDD_Output			FDD_Historical_1901-2006
+#============================================================

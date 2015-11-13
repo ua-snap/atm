@@ -2,7 +2,7 @@ import numpy as np
 import gdal, os, sys, glob, random
 import pylab as pl
 
-def initial_cohort_check(self):
+def barrow_initial_cohort_check(self):
     """
     The purpose of this module is to ensure that all fractional land-surface cohorts, in each element,
     sums to one.  There are errors introducted in the the interpolation process
@@ -248,6 +248,210 @@ def initial_cohort_check(self):
             pl.colorbar( extend = 'max', shrink = 0.92)
             pl.savefig('./All_Cohorts/Total_Cohort_Initial_Fraction.png', format = 'png')
             self.ATTM_Total_Fractional_Area.tofile('./All_Cohorts/Initial_Cohort_Fractional_Area.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------
+        # Return to Run Directory
+        #----------------------------------
+        os.chdir(self.control['Run_dir'])
+
+
+def tanana_initial_cohort_check(self):
+    """
+    The purpose of this module is to ensure that all fractional land-surface cohorts, in each element,
+    sums to one.  There are errors introducted in the the interpolation process
+    (from Mark Lara files to 25x25m resolution).
+
+    The initial step is to compare the total number of fine-resolution cohorts to the total number
+    of cohorts.  In nearly all the ATTM elements, the total fractional area is not 1.0 (either above
+    or below).  At this point, the land-surface cohorts are normalized to the ATTM element (in order to
+    ensure 1.0.
+
+    On the edges of the model domain (i.e. in areas in contact with the ocean), the total fractional area
+    of land-surface cohorts is most likely significantly less than 1.0.  In these cases, the fractional
+    area will not be normalized.
+
+    The minimum total fractional area required for normalization is 0.50.
+
+    """
+    # Statement for debugging
+    print '    Checking initial cohorts, normalizing to 1.0'
+    
+    # ----------------------------------------------------------------------
+    # Determine the initial/original total fractional area of each element.
+    # ----------------------------------------------------------------------
+    cohort_check = self.ATTM_Total / ((float(self.X_resolution)/(self.x_res)) * float(self.Y_resolution)/ \
+                   (self.y_res))
+
+    #=====================================================================================
+    # If the total fractional area of element is greater than 0.5, normalize each cohort
+    # in order get to 1.0
+    #=====================================================================================
+    # Note: In the Barrow example, the cohorts_required = 1600. Just leaving as flexible as
+    #       possible.
+    #-------------------------------------------------------------------------------------
+    cohorts_required = ((float(self.X_resolution)/(self.x_res)) * float(self.Y_resolution)/ \
+                        (self.y_res))
+
+    for i in range(0, self.ATTM_nrows * self.ATTM_ncols):
+        if cohort_check[i] > 0.5:
+            #-----------------------------------------------
+            # The normalization process
+            # adjustment = (cohorts_required / ATTM_Total)
+            # cohort_new = cohort * adjustment
+            # - - - - - - - - - - - - - - - - - - - - - - - 
+            # The new ATTM_Total should = cohorts_required
+            #-----------------------------------------------
+            adjustment = cohorts_required / self.ATTM_Total[i]
+
+            # Adjust all the land surface cohorts
+            if self.ATTM_TF_OB[i] > 0. : self.ATTM_TF_OB[i] = self.ATTM_TF_OB[i]*adjustment
+            if self.ATTM_TF_YB[i] > 0. : self.ATTM_TF_YB[i] = self.ATTM_TF_YB[i]*adjustment
+            if self.ATTM_TF_OF[i] > 0. : self.ATTM_TF_OF[i] = self.ATTM_TF_OF[i]*adjustment
+            if self.ATTM_TF_YF[i] > 0. : self.ATTM_TF_YF[i] = self.ATTM_TF_YF[i]*adjustment
+            if self.ATTM_TF_Dec_PP[i] > 0. : self.ATTM_TF_Dec_PP[i] = self.ATTM_TF_Dec_PP[i]*adjustment
+            if self.ATTM_TF_Con_PP[i] > 0. : self.ATTM_TF_Con_PP[i] = self.ATTM_TF_Con_PP[i]*adjustment
+            if self.ATTM_TF_TL[i] > 0. : self.ATTM_TF_TL[i] = self.ATTM_TF_TL[i]*adjustment
+
+    # Convert all land surface cohorts into fractional area of element
+    self.ATTM_TF_OB = np.round((self.ATTM_TF_OB) / cohorts_required, decimals = 6)
+    self.ATTM_TF_YB = np.round((self.ATTM_TF_YB) / cohorts_required, decimals = 6)
+    self.ATTM_TF_OF = np.round((self.ATTM_TF_OF) / cohorts_required, decimals = 6)
+    self.ATTM_TF_YF = np.round((self.ATTM_TF_YF) / cohorts_required, decimals = 6)
+    self.ATTM_TF_Con_PP = np.round((self.ATTM_TF_Con_PP) / cohorts_required, decimals = 6)
+    self.ATTM_TF_Dec_PP = np.round((self.ATTM_TF_Dec_PP) / cohorts_required, decimals = 6)
+    self.ATTM_TF_TL = np.round((self.ATTM_TF_TL) / cohorts_required, decimals = 6)
+
+    self.ATTM_Total_Fractional_Area = np.round( \
+                           self.ATTM_TF_OB + self.ATTM_TF_YB + \
+                           self.ATTM_TF_OF + self.ATTM_TF_YF + \
+                           self.ATTM_TF_Dec_PP + self.ATTM_TF_Con_PP + \
+                           self.ATTM_TF_TL,  decimals = 6)
+
+    for i in range(self.ATTM_nrows * self.ATTM_ncols):
+        if np.round(self.ATTM_Total_Fractional_Area[i], decimals = 4) > 1.0:
+            print 'There is a mass balance problem in element: ', i
+            print 'The total fractional area of all cohorts is greater than 1.0'
+            print '[in initial_cohort_check]'
+            print ' '
+            print 'Tanana Flats Old Bog: ',                  self.ATTM_TF_OB[i]
+            print 'Tanana Flats Young Bog: ',                self.ATTM_TF_YB[i]
+            print 'Tanana Flats Old Fen: ',                  self.ATTM_TF_OF[i]
+            print 'Tanana Flats Young Fen: ',                self.ATTM_TF_YF[i]
+            print 'Tanana Flats Deciduous Permafrost Plateau: ',  self.ATTM_TF_Dec_PP[i]
+            print 'Tanana Flats Coniferous Permafrost Plateau: ', self.ATTM_TF_Con_PP[i]
+            print 'Tanana Flats Thermokarst Lakes: ' ,       self.ATTM_TF_TL[i]
+            print 'Total Fractions: ',                       self.ATTM_Total_Fractional_Area[i]
+            exit()
+        if np.round(self.ATTM_Total_Fractional_Area[i], decimals = 4) < 0.0:
+            print 'There is a mass balance problem in element: ', i
+            print 'The total fractional area of all cohorts is less than 0.0.'
+            print '[in initial_cohort_check]'
+            print ' '
+            print 'Tanana Flats Old Bog: ',                  self.ATTM_TF_OB[i]
+            print 'Tanana Flats Young Bog: ',                self.ATTM_TF_YB[i]
+            print 'Tanana Flats Old Fen: ',                  self.ATTM_TF_OF[i]
+            print 'Tanana Flats Young Fen: ',                self.ATTM_TF_YF[i]
+            print 'Tanana Flats Coniferous Permafrost Plateau: ', self.ATTM_TF_Con_PP[i]
+            print 'Tanana Flats Deciduous Permafrost Plateau: ', self.ATTM_TF_Dec_PP[i]
+            print 'Tanana Flats Thermokarst Lakes: ' ,       self.ATTM_TF_TL[i]
+            print 'Total Fractions: ',                       self.ATTM_Total_Fractional_Area[i]
+            exit()
+    # Statement of what has been done for debugging
+    print '      done.'
+    print ' '
+
+    if self.initialize['Normalized_Cohort_Distribution_Figure'].lower() == 'yes':    
+        cohort_check = np.reshape(self.ATTM_Total_Fractional_Area,  [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+
+        # Files for plotting & reference #
+        ATTM_TF_OB_plot =  np.reshape(self.ATTM_TF_OB,        [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_TF_YB_plot =  np.reshape(self.ATTM_TF_YB,        [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_TF_OF_plot =  np.reshape(self.ATTM_TF_OF,        [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_TF_YF_plot =  np.reshape(self.ATTM_TF_YF,        [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_TF_Con_PP_plot = np.reshape(self.ATTM_TF_Con_PP, [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_TF_Dec_PP_plot = np.reshape(self.ATTM_TF_Dec_PP, [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_TF_TL_plot     =  np.reshape(self.ATTM_TF_TL,    [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+        ATTM_Total_plot     =  np.reshape(self.ATTM_Total_Fractional_Area,\
+                                        [int(self.ATTM_nrows), int(self.ATTM_ncols)])
+
+        #----------------------------
+        # Move to Output Directory
+        #----------------------------
+        os.chdir(self.control['Run_dir']+self.Output_directory)
+
+        # -----------------------------------------------------------------------------
+        # Output files and figures
+        # -----------------------------------------------------------------------------
+        if self.initialize['TF_OB_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_OB_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flat Old Bog Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_OB/TF_OB_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_OB.tofile('./TF_OB/TF_OB_fractional_cohorts.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------
+        if self.initialize['TF_YB_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_YB_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flats Young Bog Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_YB/TF_YB_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_YB.tofile('./TF_YB/TF_YB_fractional_cohorts.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------
+        if self.initialize['TF_OF_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_OF_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flats Old Fen Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_OF/TF_OF_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_OF.tofile('./TF_OF/TF_OF_fractional_cohorts.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------
+        if self.initialize['TF_YF_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_YF_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flats Young Fen Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_YF/TF_YF_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_YF.tofile('./TF_YF/TF_YF_fractional_cohorts.bin')
+            pl.close()
+         # -----------------------------------------------------------------------------
+        if self.initialize['TF_Con_PP_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_Con_PP_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flats Coniferous Permafrost Plateau Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_Con_PP/TF_Con_PP_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_Con_PP.tofile('./TF_Con_PP/TF_Con_PP_fractional_cohorts.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------
+        if self.initialize['TF_Dec_PP_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_Dec_PP_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flats Deciduous Permafrost Plateau Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_Dec_PP/TF_Dec_PP_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_Dec_PP.tofile('./TF_Dec_PP/TF_Dec_PP_fractional_cohorts.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------        
+        if self.initialize['TF_TL_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_TF_TL_plot, interpolation='nearest', cmap='bone')
+            pl.title('Tanana Flats Thermokarst Lake Initial Fractional Area')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_TL/TF_TL_Initial_Fraction.png', format = 'png')
+            self.ATTM_TF_TL.tofile('./TF_TL/TL_TL_fractional_cohorts.bin')
+            pl.close()
+        # -----------------------------------------------------------------------------
+        if self.initialize['TF_Total_Cohorts_Normal'].lower() == 'yes':
+            fig = pl.figure()
+            pl.imshow(ATTM_Total_plot, interpolation='nearest', cmap='bone')
+            pl.title('Total of All Initial Fractional Areas')
+            pl.colorbar( extend = 'max', shrink = 0.92)
+            pl.savefig('./TF_All_Cohorts/Total_Cohort_Initial_Fraction.png', format = 'png')
+            self.ATTM_Total_Fractional_Area.tofile('./TF_All_Cohorts/Initial_Cohort_Fractional_Area.bin')
             pl.close()
         # -----------------------------------------------------------------------------
         # Return to Run Directory

@@ -49,22 +49,15 @@ def archive(self):
     #=================================
     # Model Control
     self.archive_file.add(sys.argv[1])
-    # Met Control
-    #self.archive_file.add(self.Met_Control)
-    # Terrestrial Cohort Information
-    #self.archive_file.add(self.Wet_NPG_Control)
-    #self.archive_file.add(self.Wet_LCP_Control)
-    #self.archive_file.add(self.Wet_CLC_Control)
-    #self.archive_file.add(self.Wet_FCP_Control)
-    #self.archive_file.add(self.Wet_HCP_Control)
-    #self.archive_file.add(self.Lake_Pond_Control)
-    # Archive Information
-    #self.archive_file.add(self.archive_data)                     
 
     #==================================
     # Add the Initialization Directory
     #----------------------------------
     if self.archive['Initialization'].lower() == 'yes':
+        if self.Simulation_area.lower() == 'barrow':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Barrow/')
+        elif self.Simulation_area.lower() == 'tanana':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Tanana/')
         self.archive_file.add(self.control['Initialize_Control'])
         os.chdir(self.control['Run_dir']+self.Output_directory)
         # Determine if Figures are to be included in the archive
@@ -79,12 +72,12 @@ def archive(self):
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
         csv_files = glob.glob('*.csv')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         if len(png_files) > 0:
             os.system('rm *.png')
-        if len(csv_files) > 0:
-            os.system('rm *.csv')
+        #if len(csv_files) > 0:
+        #    os.system('rm *.csv')
         # Change to Degree Days directory
         os.chdir('./Degree_Days')
         jpg_files = glob.glob('*.jpg')
@@ -115,16 +108,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/All_Cohorts/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         if len(png_files) > 0:
             os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -147,16 +140,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Lakes/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         if len(png_files) > 0:
             os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -178,10 +171,10 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Other_Cohorts/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         # Return to the run directory
         os.chdir(self.control['Run_dir'])
 
@@ -202,16 +195,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Ponds/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -234,16 +227,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_CLC/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -266,16 +259,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_LCP/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -298,16 +291,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_FCP/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -330,16 +323,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_HCP/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
         #    os.system('rm *.jpg')
         # Return to the run directory
@@ -362,16 +355,16 @@ def archive(self):
         os.chdir(self.control['Run_dir']+self.Output_directory+'/Wet_NPG/')
         bin_files = glob.glob('*.bin')
         png_files = glob.glob('*.png')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
-        if len(png_files) > 0:
-            os.system('rm *.png')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
+        #if len(png_files) > 0:
+        #    os.system('rm *.png')
         os.chdir('./Year_Cohorts/')
         #os.system('rm *.avi')
         bin_files = glob.glob('*.bin')
         jpg_files = glob.glob('*.jpg')
-        if len(bin_files) > 0:
-            os.system('rm *.bin')
+        #if len(bin_files) > 0:
+        #    os.system('rm *.bin')
         #if len(jpg_files) > 0:
             #os.system('rm *.jpg')
         # Return to the run directory

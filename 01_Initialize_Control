@@ -1,0 +1,35 @@
+############################################
+# Initial Cohort Information
+############################################
+Initial_Cohort_Distribution_Figure    Yes
+# ------------------------------------------
+# If figures are wanted, which cohorts?
+TF_PFP_Figure		Yes
+TF_TL_Figure		Yes
+TF_YF_Figure		Yes
+TF_YB_Figure		Yes
+TF_OB_Figure		Yes
+TF_OF_Figure		Yes
+TF_All_Cohorts_Figure	Yes
+############################################
+Normalized_Cohort_Distribution_Figure 	Yes
+#-------------------------------------------
+# If figures are wanted, which cohorts?
+TF_PFP_Normal			Yes
+TF_TL_Normal			Yes
+TF_YF_Normal			Yes
+TF_YB_Normal			Yes
+TF_OB_Normal			Yes
+TF_OF_Normal			Yes
+TF_Total_Cohorts_Normal		Yes
+##########################################
+Initial_Cohort_Age_Figure		Yes
+#-----------------------------------------
+# If figures are wanted, which cohorts
+TF_PFP_Age				Yes
+TF_TL_Age				Yes
+TF_YF_Age				Yes
+TF_YB_Age				Yes
+TF_OF_Age				Yes
+TF_OB_Age				Yes
+###########################################

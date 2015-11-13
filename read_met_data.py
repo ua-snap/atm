@@ -164,7 +164,72 @@ def read_met_data(self):
 
                     # Moving on to the next line
                     count = count + 1
+                    
+                elif self.Met['met_file_distributed'] == 'BarrowAT_1901-2100_CCCMA':
+                    # Calculate JD
+                    #if count == 0 and re.split('[_ .]', line)[3] == '01':  # assuming January of first year
+                    #    self.JD[count] = int(15)
+                    if count == 0:
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                    else:
+                        if count < 1272:  # Number of lines in the file listing geotifs to read
+                            d2 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                            self.JD[count] = (d2-d1).days
+                        else:
+                            d2 = datetime.datetime(int(re.split('[_ .]', line)[4]), \
+                                               int(re.split('[_ .]', line)[3]), 1)
 
+                    # Month and Year Arrays
+                    if count < 1272:
+                        self.Month[count] = re.split('[_ .]', line)[2]
+                        self.Year[count] = re.split('[_ .]', line)[3]
+                    else:
+                        self.Month[count] = re.split('[_ .]', line)[3]
+                        self.Year[count] = re.split('[_ .]', line)[4]
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+
+                    self.Temp[count,:] = myarray.flatten()
+
+                    # Moving on to the next line
+                    count = count + 1
+                
+                elif self.Met['met_file_distributed'] == 'BarrowAT_1901-2100_ECHAM5':
+                    # Calculate JD
+                    #if count == 0 and re.split('[_ .]', line)[3] == '01':  # assuming January of first year
+                    #    self.JD[count] = int(15)
+                    if count == 0:
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                    else:
+                        if count < 1272:
+                            d2 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                            self.JD[count] = (d2-d1).days
+                        else:
+                            d2 = datetime.datetime(int(re.split('[_ .]', line)[4]), \
+                                               int(re.split('[_ .]', line)[3]), 1)
+
+                    # Month and Year Arrays
+                    if count < 1272:
+                        self.Month[count] = re.split('[_ .]', line)[2]
+                        self.Year[count] = re.split('[_ .]', line)[3]
+                    else:
+                        self.Month[count] = re.split('[_ .]', line)[3]
+                        self.Year[count] = re.split('[_ .]', line)[4]
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+
+                    self.Temp[count,:] = myarray.flatten()
+
+                    # Moving on to the next line
+                    count = count + 1
             
         # Determine number of model time steps
         self.ATTM_time_steps = max(self.Year) - min(self.Year) 

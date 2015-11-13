@@ -63,7 +63,19 @@ def read_layers(self):
     if self.Read_Geotiff.lower() == 'yes':
 
         """ Read files from the input directory """
-        os.chdir(self.control['Run_dir']+self.Input_directory)
+        if self.Simulation_area.lower() == 'barrow':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Barrow')
+        elif self.Simulation_area.lower() == 'arctic_coast':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Arctic')
+        elif self.Simulation_area.lower() == 'tanana':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Tanana')
+        elif self.Simulation_area.lower() == 'yukon':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Yukon')
+        elif self.Simulation_area.lower() == 'aiem':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/AIEM')
+        elif self.Simulation_area.lower() == 'ngee':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/NGEE')
+        #os.chdir(self.control['Run_dir']+self.Input_directory)
         geotiff_filenames = glob.glob('*.tif')
 
         """ Create Layer Dictionaries """
@@ -93,7 +105,7 @@ def read_layers(self):
             #print self.base, 'number rows (y-dimension): ', self.LayerInformation['self.base+str(_Ny)']
 
             """ Assuming that the (0,0) element is located in the Upper Left Corner """
-            if self.base == "LowCenter":
+            if self.base == "LowCenter" or self.base == "Deciduous_PermafrostPlateau":
                 self.nrows = self.LayerInformation['self.base+str(_Ny)']           # number of rows  
                 self.ncols = self.LayerInformation['self.base+str(_Nx)']           # number of columns 
                 self.x_res = abs(self.LayerInformation['self.base+str(_deltaX)'])  # x-resolution [m, absolute value]
@@ -103,27 +115,42 @@ def read_layers(self):
             self.InitialCohorts['self.base'] = np.array(ds.GetRasterBand(1).ReadAsArray())
             # Data Arrays Below
             if self.base == "LowCenter":
-                self.LCP = self.InitialCohorts['self.base']       # Low Center Polygon
+                self.LCP = self.InitialCohorts['self.base']       # Barrow - Low Center Polygon
                 #print self.LCP[1000:1005, 1000:1005]   # Works
             elif self.base == "Rivers":                           
-                self.Rivers = self.InitialCohorts['self.base']    # Rivers
+                self.Rivers = self.InitialCohorts['self.base']    # Barrow - Rivers
             elif self.base == "Ponds":
-                self.Ponds = self.InitialCohorts['self.base']     # Ponds or Shallow Lake
+                self.Ponds = self.InitialCohorts['self.base']     # Barrow - Ponds or Shallow Lake
             elif self.base == "Lakes":                       
-                self.Lakes = self.InitialCohorts['self.base']     # Lake
+                self.Lakes = self.InitialCohorts['self.base']     # Barrow - Lake
             elif self.base == "FlatCenter":
-                self.FCP = self.InitialCohorts['self.base']       # Flat Center Polygon
+                self.FCP = self.InitialCohorts['self.base']       # Barrow - Flat Center Polygon
             elif self.base == "Urban":
-                self.Urban = self.InitialCohorts['self.base']     # Urban
+                self.Urban = self.InitialCohorts['self.base']     # Barrow - Urban
             elif self.base == "Meadows":
-                self.NPG = self.InitialCohorts['self.base']       # Non-Polygonal Ground
+                self.NPG = self.InitialCohorts['self.base']       # Barrow - Non-Polygonal Ground
             elif self.base == "CoalescentLowCenter":
-                self.CLC = self.InitialCohorts['self.base']       # Coalescent Low Center polygon
+                self.CLC = self.InitialCohorts['self.base']       # Barrow - Coalescent Low Center polygon
             elif self.base == "HighCenter":
-                self.HCP = self.InitialCohorts['self.base']       # High Center Polygon
+                self.HCP = self.InitialCohorts['self.base']       # Barrow - High Center Polygon
+            elif self.base == "OldBog":
+                self.TF_OB = self.InitialCohorts['self.base']     # Tanana Flats - Old Bog
+            elif self.base == "OldFen":
+                self.TF_OF = self.InitialCohorts['self.base']     # Tanana Flats - Old Fen   
+            elif self.base == "Coniferous_PermafrostPlateau":
+                self.TF_Con_PP = self.InitialCohorts['self.base'] # Tanana Flats - Coniferous Permafrost Plateau
+            elif self.base == "Deciduous_PermafrostPlateau":
+                self.TF_Dec_PP = self.InitialCohorts['self.base'] # Tanana Flats - Deciduous Permafrost Plateau
+            elif self.base == "ThermokarstLake":
+                self.TF_TL = self.InitialCohorts['self.base']     # Tanana Flats - Thermokarst Lakes
+            elif self.base == "YoungBog":
+                self.TF_YB = self.InitialCohorts['self.base']     # Tanana Flats - Young Bogs
+            elif self.base == "YoungFen":
+                self.TF_YF = self.InitialCohorts['self.base']     # Tanana Flats - Young Fens
             else:
                 print '--  ERROR -- '
-                print 'There is a problem with the Geotiff File names.' 
+                print 'There is a problem with the Geotiff File names.'
+                print '(read_layers.py)' 
                 exit()
     else:
         print 'Need an alternative method of reading initial cohorts and other necessary information.'
