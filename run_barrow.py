@@ -6,17 +6,20 @@ of the initialization processes for the Barrow
 Peninsula simulations in order to keep the ATM
 code clean.
 """
+import numpy as np
 
 #---------------------------------------------------------------------
 import active_layer_depth
 import check_climate_event
-import check_Lakes
-import check_Ponds
-import check_Wet_CLC
-import check_Wet_FCP
-import check_Wet_HCP
-import check_Wet_LCP
-import check_Wet_NPG
+#import check_Lakes
+#import check_Ponds
+import check_Lakes_WT
+import check_Ponds_WT
+import check_Meadow_WT
+import check_LCP_WT
+import check_CLC_WT
+import check_FCP_WT
+import check_HCP_WT
 import climate_expansion_arrays
 import cohorts
 import cohort_check
@@ -56,7 +59,6 @@ def initialize_barrow_cohorts(self):
     set_ice_thickness_array.set_ice_thickness_array(self)
     climate_expansion_arrays.set_climate_expansion_arrays(self)
     set_pond_growth_array.set_pond_growth_array(self)
-
     print '====================================='
     print ' Initializing Terrestrial Properties'
     print '====================================='
@@ -68,16 +70,23 @@ def initialize_barrow_cohorts(self):
     set_ALD_array.set_ALD_array(self)
     set_protective_layer.set_protective_layer(self)
     set_initial_cumulative_probability.set_initial_cumulative_probability(self)
-    # Initializing Terrestrial Cohort Properties 
-    initialize.Wet_NPG(self)
-    initialize.Wet_LCP(self)
-    initialize.Wet_CLC(self)
-    initialize.Wet_FCP(self)
-    initialize.Wet_HCP(self)
-    # Other needed information [in the future]
+    # Initializing Terrestrial Cohort Properties
+    initialize.CLC_WT(self)
+    initialize.CoastalWaters_WT(self)
+    initialize.DrainedSlope_WT(self)
+    initialize.FCP_WT(self)
+    initialize.HCP_WT(self)
+    initialize.LCP_WT(self)
+    initialize.Meadow_WT(self)
+    initialize.NoData_WT(self)
+    initialize.SandDunes_WT(self)
+    initialize.SaturatedBarrens_WT(self)
+    initialize.Shrubs_WT(self)
+    initialize.Urban_WT(self)
     initial_cohort_age.initial_cohort_age(self)
 #---------------------------------------------------------------------
 def run_barrow(self, time):
+    
     for time in range(0, self.stop):
         if time == 0:
             cohorts.initial_barrow(self)
@@ -98,7 +107,6 @@ def run_barrow(self, time):
             # each element
             # ----------------------------------------------------
             cohort_start = cohort_check.cohort_start(self, element, time)
-
             # ----------------------------------------------------
             # Expand/Infill lake & ponds by prescribed rates
             # ----------------------------------------------------
@@ -113,11 +121,49 @@ def run_barrow(self, time):
             # ----------------------------------
             # Cycle through terrestrial cohorts
             # ----------------------------------
-            check_Wet_NPG.check_Wet_NPG(self, element, time)
-            check_Wet_LCP.check_Wet_LCP(self, element, time)
-            check_Wet_CLC.check_Wet_CLC(self, element, time)
-            check_Wet_FCP.check_Wet_FCP(self, element, time)
-            check_Wet_HCP.check_Wet_HCP(self, element, time)
+            check_Meadow_WT.check_Meadow_WT_Y(self, element, time)
+            check_Meadow_WT.check_Meadow_WT_M(self, element, time)
+            check_Meadow_WT.check_Meadow_WT_O(self, element, time)
+            check_LCP_WT.check_LCP_WT_Y(self, element, time)
+            check_LCP_WT.check_LCP_WT_M(self, element, time)
+            check_LCP_WT.check_LCP_WT_O(self, element, time)
+            check_CLC_WT.check_CLC_WT_Y(self, element, time)
+            check_CLC_WT.check_CLC_WT_M(self, element, time)
+            check_CLC_WT.check_CLC_WT_O(self, element, time)
+            check_FCP_WT.check_FCP_WT_Y(self, element, time)
+            check_FCP_WT.check_FCP_WT_M(self, element, time)
+            check_FCP_WT.check_FCP_WT_O(self, element, time)
+            check_HCP_WT.check_HCP_WT_Y(self, element, time)
+            check_HCP_WT.check_HCP_WT_M(self, element, time)
+            check_HCP_WT.check_HCP_WT_O(self, element, time)
+            #=====================================================
+            # NOTE: 17 Oct 2016. The following are place holders
+            # until we figure out if/how these sets of cohorts
+            # can transition into other cohorts.
+            #-----------------------------------------------------
+            #check_CoastalWaters_WT.check_CoastalWaters_WT_O(self, element, time)
+            #check_DrainedSlope_WT.check_DrainedSlope_WT_Y(self, element, time)
+            #check_DrainedSlope_WT.check_DrainedSlope_WT_M(self, element, time)
+            #check_DrainedSlope_WT.check_DrainedSlope_WT_O(self, element, time)
+            #check_NoData_WT.check_NoData_WT_O(self, element, time)
+            #check_SandDunes_WT.check_SandDunes_WT_Y(self, element, time)
+            #check_SandDunes_WT.check_SandDunes_WT_M(self, element, time)
+            #check_SandDunes_WT.check_SandDunes_WT_O(self, element, time)
+            #check_SaturatedBarrens_WT.check_SaturatedBarrens_WT_Y(self, element, time)
+            #check_SaturatedBarrens_WT.check_SaturatedBarrens_WT_M(self, element, time)
+            #check_SaturatedBarrens_WT.check_SaturatedBarrens_WT_O(self, element, time)
+            #check_Shrubs_WT.check_Shrubs_WT_O(self, element, time)
+            #check_Urban_WT.check_Urban_WT(self, element, time)
+            #====================================================
+            # Note: 17 Oct 2016. The following checks are pretty much obsolete
+            # at this point. Will clean up once everything is working well.
+            # ----------------------------------------------------
+#            check_Wet_NPG.check_Wet_NPG(self, element, time)
+#            check_Wet_LCP.check_Wet_LCP(self, element, time)
+#            check_Wet_CLC.check_Wet_CLC(self, element, time)
+#            check_Wet_FCP.check_Wet_FCP(self, element, time)
+#            check_Wet_HCP.check_Wet_HCP(self, element, time)
+            #=====================================================
 
             # ----------------------------------
             # Set pond/lake ice thickness depth
@@ -126,9 +172,18 @@ def run_barrow(self, time):
             # ------------------------------
             # Cycle through ponds and lakes
             # ------------------------------
-            check_Ponds.check_Ponds(self, element, time)
-            check_Lakes.check_Lakes(self, element, time)
-
+            check_Ponds_WT.check_Ponds_WT_Y(self, element, time)
+            check_Ponds_WT.check_Ponds_WT_M(self, element, time)
+            check_Ponds_WT.check_Ponds_WT_O(self, element, time)
+            check_Lakes_WT.check_LargeLakes_WT_Y(self, element, time)
+            check_Lakes_WT.check_LargeLakes_WT_M(self, element, time)
+            check_Lakes_WT.check_LargeLakes_WT_O(self, element, time)
+            check_Lakes_WT.check_MediumLakes_WT_Y(self, element, time)
+            check_Lakes_WT.check_MediumLakes_WT_M(self, element, time)
+            check_Lakes_WT.check_MediumLakes_WT_O(self, element, time)
+            check_Lakes_WT.check_SmallLakes_WT_Y(self, element, time)
+            check_Lakes_WT.check_SmallLakes_WT_M(self, element, time)
+            check_Lakes_WT.check_SmallLakes_WT_O(self, element, time)
             # -------------------------------------------------
             # Cohort Fraction Check (mass balance of cohorts)
             # -------------------------------------------------
@@ -136,11 +191,9 @@ def run_barrow(self, time):
 
             if time == self.stop -1:
                 cohorts.final_barrow(self)
-
             # ========================================================================
             # END MAIN LOOP 
             # ========================================================================
-
         # ========================================================================
         # OUTPUT RESULTS (if requested)
         # ========================================================================

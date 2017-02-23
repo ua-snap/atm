@@ -54,7 +54,8 @@ def read_ice_content(self):
         # ---------------------------
         # Change to output directory
         # --------------------------
-        os.chdir(self.control['Run_dir']+self.Output_directory)
+        if self.Simulation_area.lower() == 'barrow':
+            os.chdir(self.control['Run_dir']+self.Output_directory+'/Barrow')
 
         # --------------------------
         # Figure / file creation

@@ -52,7 +52,8 @@ def read_drainage_efficiency(self):#, PLOT, FIGURE, DISTRIBUTION):
         # -------------------------
         # Move to output directory
         # -------------------------
-        os.chdir(self.control['Run_dir']+self.Output_directory)
+        if self.Simulation_area.lower() == 'barrow':
+            os.chdir(self.control['Run_dir']+self.Output_directory+'/Barrow')
 
         # -----------------------
         # Create desired output

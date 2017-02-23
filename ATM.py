@@ -15,13 +15,20 @@ Modified: October 2015. Bob Bolton.
 
 ________________________________________________________________________________
 
+The ATM code is python based and is executed with the following command:
+$ python ATM.py <control file name>
+
+The control file is used to set up the simulation input/output locations,
+defines the model domain, etc.
+________________________________________________________________________________
+
 """
 
 ################################################################################
 # Authorship
 ################################################################################
 __author__     = "Bob Bolton"
-__copyright__  = "Copyright 2014, Bob Bolton"
+__copyright__  = "Copyright 2014, 2015, 2016, 2017, Bob Bolton"
 __credits__    = ["Bob Bolton", "Vladimir Romanovsky", "Dave McGuire", "AIEM Thermokarst Team"]
 __license__    = "GPL"
 __version__    = "0.1"
@@ -42,6 +49,8 @@ from scipy import interpolate
 from scipy import integrate
 import subprocess
 import tarfile
+import faulthandler
+
 
 # Import ATM Modules
 import clock
@@ -54,21 +63,8 @@ import model_domain
 import create_attm_cohort_arrays
 import run_barrow
 import run_tanana
+import run_yukon
 import initialize
-#import cohorts
-#import check_climate_event
-#import check_water_climate
-#import lake_pond_expansion
-#import active_layer_depth
-#import check_Wet_NPG
-#import check_Wet_LCP
-#import check_Wet_CLC
-#import check_Wet_FCP
-#import check_Wet_HCP
-#import ice_thickness
-#import check_Ponds
-#import check_Lakes
-#import cohort_check
 
 import Output_cohorts_by_year
 import results
@@ -82,6 +78,7 @@ class ATM(object):
         # ----------------------
         # Simulation Start Time
         # ----------------------
+        faulthandler.enable()
         clock.start(self)
         
         #--------------------------------------
@@ -117,6 +114,8 @@ class ATM(object):
             run_barrow.initialize_barrow(self)
         elif self.Simulation_area.lower() == 'tanana':
             run_tanana.initialize_tanana(self)
+        elif self.Simulation_area.lower() == 'yukon':
+            run_yukon.initialize_yukon(self)
          
         #=======================================
         # READ MET Data, Calculate Degree Days,
@@ -145,8 +144,8 @@ class ATM(object):
         initialize.run(self)
         if self.Simulation_area.lower() == 'barrow':
             run_barrow.run_barrow(self, time)
-	elif self.Simulation_area.lower() == 'tanana':
-	    run_tanana.run_tanana(self, time)
+        elif self.Simulation_area.lower() == 'tanana':
+            run_tanana.run_tanana(self, time)
 
         print '=================================================='
         print '            Finished the MAIN LOOP '
@@ -171,14 +170,18 @@ class ATM(object):
         # Archive Results
         # ================
         if self.archive_simulation.lower() == 'yes':
+            archive.read_archive(self)
+            archive.archive(self)
         #----------------------------------------------------------------------------------------------------------
         # Create the tarfile
         #----------------------------------------------------------------------------------------------------------
             self.archive_file =tarfile.open(self.control['Run_dir']+self.Output_directory+str('/Archive/')+ \
                                             self.archive_time+str('_')+self.simulation_name+".tar.gz", mode='w:gz')
         #----------------------------------------------------------------------------------------------------------
-            archive.read_archive(self)
-            archive.archive(self)
+            if self.Simulation_area.lower() == 'barrow':
+                os.chdir(self.control['Run_dir']+self.Input_directory+'/Barrow/')
+                
+
             
         print '----------------------------------------'
         print '        Simulation Complete             '

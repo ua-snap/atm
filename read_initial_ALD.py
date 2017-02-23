@@ -34,7 +34,8 @@ def read_initial_ALD(self):
         # -------------------------
         # Move to Output Directory
         # -------------------------
-        os.chdir(self.control['Run_dir']+self.Output_directory)
+        if self.Simulation_area.lower() == 'barrow':
+            os.chdir(self.control['Run_dir']+self.Output_directory+'/Barrow')
 
         # Create desired output
         initial_ALD = np.reshape(initial_ALD, [self.ATTM_nrows, self.ATTM_ncols])

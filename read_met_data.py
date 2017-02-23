@@ -66,8 +66,14 @@ def read_met_data(self):
     else:
         print '   Reading Distributed Temperature Data...'
         print '   '
-        
-        os.chdir(self.control['Run_dir']+self.Input_directory+'/Met/')
+
+        if self.Simulation_area.lower() == 'barrow':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Barrow/Met/')
+        elif self.Simulation_area.lower() == 'tanana':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Tanana/Met/')
+        elif self.Simulation_area.lower() == 'yukon':
+            os.chdir(self.control['Run_dir']+self.Input_directory+'/Yukon/Met/')
+            
         #print '    Meterologic data used:', self.met_file
         #print ' '
 
@@ -115,7 +121,67 @@ def read_met_data(self):
 
                     # Moving on to the next line
                     count = count + 1
+                
+                #####
+                # New Barrow historical - 1901 - 2009
+                #####   
+                elif self.Met['met_file_distributed'].lower() == "barrow_at_1901-2009_v1":
+                    os.chdir(self.control['Run_dir']+self.Input_directory+\
+                             '/Temperature/Barrow_Peninsula_Air_Temp_1901-2009/Processed/')
+                    if count == 0 : 
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                    else:
+                        d2 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                        self.JD[count] = (d2-d1).days
 
+                    # Month and Year Arrays
+                    if count < num_lines:
+                        self.Month[count] = re.split('[_ .]', line)[2]
+                        self.Year[count]  = re.split('[_ .]', line)[3]
+
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+
+                    self.Temp[count,:] = myarray.flatten()
+
+                    # Moving on to the next line
+                    count = count + 1
+
+                #####
+                # New Yukon Flats historical - 1901 - 2009
+                #####   
+                elif self.Met['met_file_distributed'].lower() == "yukon_flats_at_1901-2009_v1":
+                    os.chdir(self.control['Run_dir']+self.Input_directory+\
+                             '/Temperature/Yukon_Flats_Air_Temp_1901-2009/')
+                    if count == 0 : 
+                        self.JD[count] = 1
+                        d1 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                    else:
+                        d2 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
+                                               int(re.split('[_ .]', line)[2]), 1)
+                        self.JD[count] = (d2-d1).days
+
+                    # Month and Year Arrays
+                    if count < num_lines:
+                        self.Month[count] = re.split('[_ .]', line)[2]
+                        self.Year[count]  = re.split('[_ .]', line)[3]
+
+                    # Temperature Array
+                    dataset = gdal.Open(line, gdalconst.GA_ReadOnly)
+                    myarray = np.array(dataset.GetRasterBand(1).ReadAsArray())
+
+                    self.Temp[count,:] = myarray.flatten()
+
+                    # Moving on to the next line
+                    count = count + 1
+
+
+                    
                 elif self.Met['met_file_distributed'] == 'BarrowAT_2001-2100_cccma':
                     # Calculate JD
                     #if count == 0 and re.split('[_ .]', line)[3] == '01':  # assuming January of first year
@@ -174,7 +240,7 @@ def read_met_data(self):
                         d1 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
                                                int(re.split('[_ .]', line)[2]), 1)
                     else:
-                        if count < 1272:  # Number of lines in the file listing geotifs to read
+                        if count < 1:  # Number of lines in the file listing geotifs to read
                             d2 = datetime.datetime(int(re.split('[_ .]', line)[3]), \
                                                int(re.split('[_ .]', line)[2]), 1)
                             self.JD[count] = (d2-d1).days
@@ -232,8 +298,8 @@ def read_met_data(self):
                     count = count + 1
             
         # Determine number of model time steps
-        self.ATTM_time_steps = max(self.Year) - min(self.Year) 
-
+        self.ATTM_time_steps = int(max(self.Year) - min(self.Year))
+        
         # End Statement
         print '    The number of model time steps is '+str(int(self.ATTM_time_steps)) + ' years.'
         print '    done.'

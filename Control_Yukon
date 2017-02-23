@@ -1,0 +1,82 @@
+#================================================================
+#              START MODEL CONTROL FILE
+#================================================================
+# INFORMATION NEEDED TO SET UP THE SIMULATION
+#================================================================
+# Simulation Area (which code to run): .
+#       [barrow, arctic_coast, tanana, yukon, AIEM, ngee]
+Simulation_area					yukon
+#----------------------------------------------------------------
+# Specify location of computer code on local computer
+Run_dir		/home/bob/Dropbox/SNAP/CSC/AIEM/Thermokarst/ATM_Code/
+#----------------------------------------------------------------
+# Data Input and Output Directories
+Input_dir				  Input
+Output_dir				  Output
+#----------------------------------------------------------------
+# Name of "Notes Files" containing additional information
+#   -- "Blank" is an empty file.
+Notes_file				2015_August_24_ForCathy
+#----------------------------------------------------------------
+# Information needed to initialize the model
+Initialize_Control			00_Initialize_Control
+#----------------------------------------------------------------
+# Model resolution [meters]
+X_model_resolution			1000.
+Y_model_resolution			1000.
+#----------------------------------------------------------------
+# Flag to read & write geotiff files for landcover information
+Read_Geotiff				Yes
+Write_Geotiff				Yes
+Initial_Cohort_List        00_Yukon_Initial_Cohort_List
+#----------------------------------------------------------------
+# Flag for setting artifical "young" fens and bogs. To be 
+# used until data layers are received. 
+Young_Bog_Flag				Yes
+Young_Fen_Flag				Yes
+Lower_Bog_Percentage			5
+Upper_Bog_Percentage			10
+Lower_Fen_Percentage			5
+Upper_Fen_Percentage			10
+#----------------------------------------------------------------
+# TEST CODE CONTROL (short simulations for testing purposes)
+Test_code               		yes
+Test_code_duration			    2
+#================================================================
+# INFORMATION NEEDED TO RUN SIMULATION
+#================================================================
+# File Name Containing Meteorologic Data Parameters & Variables
+Met_Control				00_Met_Control
+#----------------------------------------------------------------
+# File Names Containing Terrestrial Cohort Parameters & Variables
+#    Note that Terrestial Control location should be located
+#    in the ../Input/Simulation (Barrow,Tanana, etc) directory
+#------------------------------------------------------------------------
+Terrestrial_Control	      00_Terrestrial_Control
+Barren_Yukon_Control          00_Barren_Yukon_Control
+Bog_Yukon_Control             00_Bog_Yukon_Control
+DeciduousForest_Yukon_Control 00_DeciduousForest_Yukon_Control
+DwarfShrub_Yukon_Control      00_DwarfShrub_Yukon_Control
+Fen_Yukon_Control             00_Fen_Yukon_Control
+EvergreenForest_Yukon_Control 00_EvergreenForest_Yukon_Control
+Lake_Yukon_Control            00_Lake_Yukon_Control
+Pond_Yukon_Control            00_Pond_Yukon_Control
+River_Yukon_Control           00_River_Yukon_Control
+ShrubScrub_Yukon_Control      00_ShrubScrub_Yukon_Control
+Unclassified_Yukon_Control    00_Unclassified_Yukon_Control
+#================================================================
+# INFORMATION NEEDED FOR RESULTS OUTPUT AND ARCHIVING
+#================================================================
+# Show Results Summary on Computer Screen
+Results_onscreen			No
+#----------------------------------------------------------------
+# Is the simulation archived (yes, no)? If 'yes', archive name.
+Archive_simulation			Yes
+Simulation_name				Historical_1901-2006
+#----------------------------------------------------------------
+# File Name Containing Archiving Information
+#---------------------------------------------------------------
+Archive_data				00_archive_data
+#================================================================
+# END CONTROL FILE
+#================================================================

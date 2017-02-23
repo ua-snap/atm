@@ -27,19 +27,28 @@ def read_degree_days(self):#, FIGURE):
     from scipy import integrate
     # =======================
 
+    ##################################################
+    # Move to directory where input files are located
+    ##################################################
+    if self.Simulation_area.lower() == 'barrow':
+        os.chdir(self.control['Run_dir']+self.Input_directory+'/Barrow/Degree_Days')
+        # Define output directory if figures are wanted
+        dd_out_dir = self.control['Run_dir']+self.Output_directory+'/Barrow/Initialization/Degree_Days/'
+    elif self.Simulation_area.lower() == 'yukon':
+        os.chdir(self.control['Run_dir']+self.Input_directory+'/Yukon/Degree_Days')
+        dd_out_dir = self.control['Run_dir']+self.Output_directory+'/Yukon/Initialization/Degree_Days'
+    elif self.Simulation_area.lower() == 'tanana':
+        os.chdir(self.control['Run_dir']+self.Input_directory+'/Tanana/Degree_Days')
+        dd_out_dir = self.control['Run_dir']+self.Output_directory+'/Tanana/Initialization/Degree_Days'
+
+        
     ################################
     # Read Thawing Degree Day Files
     ################################
+
     print ' '
     print 'Reading Thawing Degree Days'
-
-    os.chdir(self.control['Run_dir']+self.Input_directory+'/Degree_Days')
-
-    # Define output directory if figures are wanted
-    dd_out_dir = self.control['Run_dir']+self.Output_directory+'/Initialization/Degree_Days/'
-
-    """ NOTE: The TDD_file is located in the Input/Degree_Days/ directory """
-
+    
     num_lines = sum(1 for line in open(self.Met['TDD_file']))
 
     # Set up TDD array
@@ -82,7 +91,7 @@ def read_degree_days(self):#, FIGURE):
     ################################
     print 'Reading Freezing Degree Days'
     print ' '
-
+    
     """ NOTE: The FDD_file is located in the Input/Degree_Days/ directory """
 
     # Set up TDD array
@@ -107,7 +116,7 @@ def read_degree_days(self):#, FIGURE):
                 FDD_plot = np.reshape(self.FDD[count,:], [int(self.ATTM_nrows), int(self.ATTM_ncols)])
                 year_plot = year[count]
                 #--------------------------------------------------------
-                # Thawing Degree Days
+                # Freezing Degree Days
                 #--------------------------------------------------------
                 fig = pl.figure()
                 pl.imshow(FDD_plot, interpolation = 'nearest', cmap = 'spectral', vmin = -6000.0, vmax = -2000.0)

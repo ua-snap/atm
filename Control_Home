@@ -3,77 +3,112 @@
 #================================================================
 # INFORMATION NEEDED TO SET UP THE SIMULATION
 #================================================================
-# Simulation Area (which code to run): 
-#       [barrow, arctic_coast, tanana, yukon, alaska, ngee]
-Simulation_area					Tanana
+# Simulation Area (which code to run): .
+#       [barrow, arctic_coast, tanana, yukon, AIEM, ngee]
+Simulation_area					Barrow
 #----------------------------------------------------------------
 # Specify location of computer code on local computer
-Run_dir			/home/bob/Dropbox/SNAP/CSC/AIEM/Thermokarst/ATM_Code/
+Run_dir		/home/bob/Dropbox/SNAP/CSC/AIEM/Thermokarst/ATM_Code/
 #----------------------------------------------------------------
 # Data Input and Output Directories
-Input_dir					Input
-Output_dir					Output
+Input_dir				  Input
+Output_dir				Output
 #----------------------------------------------------------------
 # Name of "Notes Files" containing additional information
-Notes_file					2015_April_12
+#   -- "Blank" is an empty file.
+Notes_file				2015_August_24_ForCathy
 #----------------------------------------------------------------
 # Information needed to initialize the model
-# **********************************************
-# *    Note on prefixes:                       *
-# *        00_ : Barrow test area  	       *
-# *        01_ : Arctic coast simulation       *
-# *        02_ : Tanana River test area	       *
-# *        03_ : Yukon Flats test area	       *
-# *	   	   04_ : AIEM model domain	       *
-# *        05_ : NGEE model domain	       *
-#***********************************************
-Initialize_Control				02_Initialize_Control
+Initialize_Control			00_Initialize_Control
 #----------------------------------------------------------------
-# Model resolution
-X_model_resolution				1000.
-Y_model_resolution				1000.
+# Model resolution [meters]
+X_model_resolution			1000.
+Y_model_resolution			1000.
 #----------------------------------------------------------------
 # Flag to read & write geotiff files for landcover information
-Read_Geotiff					Yes
-Write_Geotiff					Yes
+Read_Geotiff				Yes
+Write_Geotiff				Yes
+Initial_Cohort_List        00_Barrow_Initial_Cohort_List
 #----------------------------------------------------------------
 # TEST CODE CONTROL (short simulations for testing purposes)
-Test_code               			Yes
-Test_code_duration				15
-#*****************************************************************
-# - - - - - - - - - - - - - - - - - - - -
-# INFORMATION NEEDED TO RUN SIMULATION
-# - - - - - - - - - - - - - - - - - - - -
-#*****************************************************************
-# File Name Containing Meteorologic Data Parameters & Variables
-Met_Control					00_Met_Control
-#*****************************************************************
-# File Names Containing Terrestrial Cohort Parameters & Variables 
-#    Note that Terrestial Control location should be specified by the
-#    00_, 01_, etc. 
-#------------------------------------------------------------------------
-Terrestrial_Control				00_Terrestrial_Control
-Wet_NPG_Control					00_Wet_NPG_Control
-Wet_LCP_Control					00_Wet_LCP_Control
-Wet_CLC_Control					00_Wet_CLC_Control
-Wet_FCP_Control					00_Wet_FCP_Control
-Wet_HCP_Control					00_Wet_HCP_Control
-#------------------------------------------------------------------------
-# File Name Containing BARROW Lake/Pond Parameters & Variables 
-Lake_Pond_Control				00_Lake_Pond_Control
+Test_code               		yes
+Test_code_duration			    5
 #================================================================
-# INFORMATION NEEDED FOR RESULTS OUTPUT AND ARCHIVING 
+# INFORMATION NEEDED TO RUN SIMULATION
+#================================================================
+# File Name Containing Meteorologic Data Parameters & Variables
+Met_Control				00_Met_Control
+#----------------------------------------------------------------
+# File Names Containing Terrestrial Cohort Parameters & Variables
+#    Note that Terrestial Control location should be located
+#    in the ../Input/Simulation (Barrow,Tanana, etc) directory
+#------------------------------------------------------------------------
+Terrestrial_Control			00_Terrestrial_Control
+Wet_NPG_Control				00_Wet_NPG_Control
+Wet_LCP_Control				00_Wet_LCP_Control
+Wet_CLC_Control				00_Wet_CLC_Control
+Wet_FCP_Control				00_Wet_FCP_Control
+Wet_HCP_Control				00_Wet_HCP_Control
+# Below are terrestrial cohorts to be used in the new Barrow/ACP products (2 June 2016)
+CLC_WT_M_Control               00_CLC_WT_M_Control
+CLC_WT_O_Control               00_CLC_WT_0_Control
+CLC_WT_Y_Control               00_CLC_WT_Y_Control
+CoastalWaters_WT_O_Control     00_CoastalWaters_WT_O_Control
+DrainedSlope_WT_M_Control      00_DrainedSlope_WT_M_Control
+DrainedSlope_WT_O_Control      00_DrainedSlope_WT_O_Control
+DrainedSlope_WT_Y_Control      00_DrainedSlope_WT_Y_Control
+FCP_WT_M_Control               00_FCP_WT_M_Control
+FCP_WT_O_Control               00_FCP_WT_O_Control
+FCP_WT_Y_Control               00_FCP_WT_Y_Control
+HCP_WT_M_Control               00_HCP_WT_M_Control
+HCP_WT_O_Control               00_HCP_WT_O_Control
+HCP_WT_Y_Control               00_HCP_WT_Y_Control
+LCP_WT_M_Control               00_LCP_WT_M_Control
+LCP_WT_O_Control               00_LCP_WT_O_Control
+LCP_WT_Y_Control               00_LCP_WT_Y_Control
+Meadow_WT_M_Control            00_Meadow_WT_M_Control
+Meadow_WT_O_Control            00_Meadow_WT_O_Control
+Meadow_WT_Y_Control            00_Meadow_WT_Y_Control
+NoData_WT_O_Control            00_NoData_WT_O_Control
+SandDunes_WT_M_Control         00_SandDunes_WT_M_Control
+SandDunes_WT_O_Control         00_SandDunes_WT_O_Control
+SandDunes_WT_Y_Control         00_SandDunes_WT_Y_Control
+SaturatedBarrens_WT_M_Control  00_SaturatedBarrens_WT_M_Control
+SaturatedBarrens_WT_O_Control  00_SaturatedBarrens_WT_O_Control
+SaturatedBarrens_WT_Y_Control  00_SaturatedBarrens_WT_Y_Control
+Shrubs_WT_O_Control            00_Shrubs_WT_O_Control
+Urban_WT_Control               00_Urban_WT_O_Control
+#----------------------------------------------------------------
+# File Name Containing Lake/Pond/River Parameters & Variables
+Lake_Pond_Control			00_Lake_Pond_Control
+LargeLakes_WT_M_Control      00_LargeLakes_WT_M_Control
+LargeLakes_WT_O_Control      00_LargeLakes_WT_O_Control
+LargeLakes_WT_Y_Control      00_LargeLakes_WT_Y_Control
+MediumLakes_WT_M_Control     00_MediumLakes_WT_M_Control
+MediumLakes_WT_O_Control     00_MediumLakes_WT_O_Control
+MediumLakes_WT_Y_Control     00_MediumLakes_WT_Y_Control
+SmallLakes_WT_M_Control      00_SmallLakes_WT_M_Control
+SmallLakes_WT_O_Control      00_SmallLakes_WT_O_Control
+SmallLakes_WT_Y_Control      00_SmallLakes_WT_Y_Control
+Ponds_WT_M_Control           00_Ponds_WT_M_Control
+Ponds_WT_O_Control           00_Ponds_WT_O_Control
+Ponds_WT_Y_Control           00_Ponds_WT_Y_Control
+Rivers_WT_M_Control          00_Rivers_WT_M_Control
+Rivers_WT_O_Control          00_Rivers_WT_O_Control
+Rivers_WT_Y_Control          00_Rivers_WT_Y_Control
+#================================================================
+# INFORMATION NEEDED FOR RESULTS OUTPUT AND ARCHIVING
 #================================================================
 # Show Results Summary on Computer Screen
-Results_onscreen				Yes
+Results_onscreen			No
 #----------------------------------------------------------------
 # Is the simulation archived (yes, no)? If 'yes', archive name.
-Archive_simulation				Yes
-Simulation_name					Historical_1
+Archive_simulation			Yes
+Simulation_name				Historical_1901-2006
 #----------------------------------------------------------------
 # File Name Containing Archiving Information
 #---------------------------------------------------------------
-Archive_data					00_archive_data
+Archive_data				00_archive_data
 #================================================================
 # END CONTROL FILE
 #================================================================
